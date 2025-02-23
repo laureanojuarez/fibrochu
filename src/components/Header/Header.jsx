@@ -11,6 +11,7 @@ export const Header = () => {
       <Link href="/carrito">
         <IoCart size={"2rem"} />
       </Link>
+      <Link href="/admin">ADMIN</Link>
     </header>
   );
 };

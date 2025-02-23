@@ -1,36 +1,37 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { ItemProducts } from "./ItemProducts";
-import { clientProducts } from "../../data/clientProducts";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/features/cartSlice";
+import { fetchProductos } from "@/lib/supabase";
 
-export const Catalogo = () => {
-  const [products, setProducts] = useState([]);
-  const dispatch = useDispatch();
-
+export default function Catalogo() {
+  const [productos, setProductos] = useState([]);
   useEffect(() => {
-    setProducts(clientProducts);
+    const getProductos = async () => {
+      const data = await fetchProductos();
+      setProductos(data);
+    };
+
+    getProductos();
   }, []);
 
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
-  };
-
   return (
-    <section className="flex flex-col">
-      <div className="flex  flex-wrap justify-center gap-4 p-4">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <ItemProducts
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
+    <div className="grid grid-cols-3 gap-4">
+      {productos.length > 0 ? (
+        productos.map((producto) => (
+          <div key={producto.id} className="border p-4">
+            <img
+              src={producto.imagen_url}
+              alt={producto.nombre}
+              className="w-full h-40 object-cover"
             />
-          ))
-        ) : (
-          <p>Loading products...</p>
-        )}
-      </div>
-    </section>
+            <h2 className="text-lg font-bold">{producto.nombre}</h2>
+            <p>{producto.descripcion}</p>
+            <p className="text-green-600">${producto.precio}</p>
+          </div>
+        ))
+      ) : (
+        <p>No hay productos disponibles.</p>
+      )}
+    </div>
   );
-};
+}

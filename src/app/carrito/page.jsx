@@ -3,7 +3,7 @@
 import { IoChevronBack } from "react-icons/io5";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart, removeFromCart } from "@/features/cartSlice";
+import { clearCart } from "@/features/cartSlice";
 import { ListCart } from "./ListCart";
 
 export default function Carrito() {
