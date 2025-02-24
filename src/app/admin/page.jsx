@@ -9,8 +9,8 @@ export default function Admin() {
     nombre: "",
     precio: "",
     descripcion: "",
-    imagen_url: "",
   });
+  const [imagen, setImagen] = useState(null);
 
   const [user, setUser] = useState(null);
   const router = useRouter();
@@ -34,6 +34,10 @@ export default function Admin() {
     setProducto({ ...producto, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    setImagen(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,33 +45,57 @@ export default function Admin() {
       !producto.nombre ||
       !producto.precio ||
       !producto.descripcion ||
-      !producto.imagen_url
+      !imagen
     ) {
       alert("Todos los campos son obligatorios");
       return;
     }
 
     try {
+      // Subir la imagen al bucket
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("imagenes_productos")
+        .upload(`productos/${imagen.name}`, imagen);
+
+      if (uploadError) {
+        console.error("Error al subir la imagen:", uploadError);
+        return;
+      }
+
+      // Obtener la URL pública de la imagen
+      const { data: publicUrlData, error: urlError } = supabase.storage
+        .from("imagenes_productos")
+        .getPublicUrl(`productos/${imagen.name}`);
+
+      if (urlError) {
+        console.error("Error al obtener la URL pública:", urlError);
+        return;
+      }
+
+      const imageUrl = publicUrlData.publicUrl;
+      console.log("URL de la imagen:", imageUrl); // Verifica si se obtiene correctamente la URL
+
+      // Insertar el producto con la URL de la imagen
       const { data, error } = await supabase.from("productos").insert([
         {
           nombre: producto.nombre,
-          precio: parseFloat(producto.precio), // Asegurar que el precio sea un número
+          precio: parseFloat(producto.precio),
           descripcion: producto.descripcion,
-          imagen_url: producto.imagen_url,
+          imagen_url: imageUrl, // Guardar la URL pública aquí
         },
       ]);
 
       if (error) {
         console.error("Error al subir producto:", error);
-        alert(`Error: ${error.message}`); // Mostrar el error real
+        alert(`Error: ${error.message}`);
       } else {
         alert("Producto subido correctamente");
         setProducto({
           nombre: "",
           precio: "",
           descripcion: "",
-          imagen_url: "",
         });
+        setImagen(null); // Resetear la imagen
       }
     } catch (err) {
       console.error("Error inesperado:", err);
@@ -78,7 +106,11 @@ export default function Admin() {
   return (
     <div className="w-full flex flex-col items-center">
       <h1>Subir Producto</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4"
+        style={{ color: "black" }}
+      >
         <input
           type="text"
           name="nombre"
@@ -99,14 +131,11 @@ export default function Admin() {
           value={producto.descripcion}
           onChange={handleChange}
         />
-        <input
-          type="text"
-          name="imagen_url"
-          placeholder="URL de la imagen"
-          value={producto.imagen_url}
-          onChange={handleChange}
-        />
-        <button type="submit">Guardar Producto</button>
+        {/* Input para seleccionar archivo */}
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <button type="submit" style={{ color: "white" }}>
+          Guardar Producto
+        </button>
       </form>
     </div>
   );
