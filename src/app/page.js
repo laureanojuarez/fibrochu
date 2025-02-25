@@ -1,12 +1,16 @@
 "use client";
 
+import { addToCart } from "@/features/cartSlice";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { useDispatch } from "react-redux";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const getProductos = async () => {
       const { data, error } = await supabase.from("productos").select("*");
@@ -44,6 +48,7 @@ export default function Home() {
               <div className="flex items-center justify-between w-full text-xl">
                 <p className="text-green-600">${producto.precio}</p>
                 <MdOutlineShoppingCart
+                  onClick={() => dispatch(addToCart(producto))}
                   size={"2rem"}
                   className="bg-gray-700 text-white rounded-md p-1"
                 />

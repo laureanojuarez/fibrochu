@@ -1,11 +1,9 @@
 "use client";
-import { useAuth } from "@/hooks/useAuth";
 import { useProductos } from "@/hooks/useProductos";
 import AdminForm from "@/components/Admin/AdminForm";
 import ProductList from "@/components/Admin/ProductList";
 
 export default function Admin() {
-  const { user, loading: authLoading, error: authError } = useAuth();
   const {
     productos,
     setProductos,
@@ -13,14 +11,6 @@ export default function Admin() {
     error: productosError,
     refreshProductos,
   } = useProductos();
-
-  const [producto, setProducto] = useState({
-    nombre: "",
-    precio: "",
-    descripcion: "",
-  });
-  const [imagen, setImagen] = useState(null);
-  const [refresh, setRefresh] = useState(false);
 
   const handleProductAdded = async () => {
     await refreshProductos();

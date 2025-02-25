@@ -1,4 +1,5 @@
 import { removeFromCart } from "@/features/cartSlice";
+import { MdDeleteForever } from "react-icons/md";
 import { useDispatch } from "react-redux";
 
 export const ListCart = ({ index, item }) => {
@@ -9,15 +10,30 @@ export const ListCart = ({ index, item }) => {
   };
 
   return (
-    <li key={index} className="flex justify-evenly items-center">
-      <div className="w-40 h-40 bg-orange-300"></div>
-      <div>
-        {item.name} - {item.description}
+    <div
+      key={index}
+      className="flex items-center justify-between w-full border-b"
+    >
+      <div className="flex items-center gap-4">
+        <img
+          src={item.imagen_url}
+          alt={item.nombre}
+          className="w-52 h-52 object-cover"
+        />
+        <div>
+          <h2 className="text-lg font-bold">{item.nombre}</h2>
+          <p>{item.descripcion}</p>
+        </div>
       </div>
-      <div>${item.price}</div>
-      <button onClick={() => handleRemoveFromCart(item.id)}>
-        Eliminar producto
-      </button>
-    </li>
+
+      <div className="flex items-center">
+        <div className="text-xl text-green-600">${item.precio}</div>
+        <MdDeleteForever
+          onClick={() => handleRemoveFromCart(item.id)}
+          size={"2rem"}
+          className="cursor-pointer"
+        />
+      </div>
+    </div>
   );
 };
