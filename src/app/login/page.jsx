@@ -8,28 +8,29 @@ export default function Login() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        router.push("/admin");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.replace("/admin");
       }
     };
     checkUser();
-  }, [router]);
+  }, []);
 
   const handleGitHubLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
+      options: {
+        redirectTo: `${window.location.origin}/admin`, // Redirige automáticamente tras la autenticación
+      },
     });
 
     if (error) {
       console.error("Error al iniciar sesión con GitHub:", error.message);
-    } else {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        router.push("/admin");
-      }
     }
   };
+
   return (
     <div className="container mx-auto">
       <h1>Login</h1>

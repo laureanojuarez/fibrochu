@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
     <Provider store={store}>
       <html lang="es">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased grid min-h-screen grid-rows-[auto,1fr,auto]`}
         >
           <Header />
           {children}

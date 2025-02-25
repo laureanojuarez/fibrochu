@@ -3,140 +3,98 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import AdminForm from "@/components/Admin/AdminForm";
+import ProductList from "@/components/Admin/ProductList";
+
+const ADMIN_ID = "4594c8df-8981-42dd-aed4-9b3daf4ade94";
 
 export default function Admin() {
-  const [producto, setProducto] = useState({
-    nombre: "",
-    precio: "",
-    descripcion: "",
-  });
-  const [imagen, setImagen] = useState(null);
-
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!data.session || error) {
-        router.push("/login"); // Si no está autenticado, lo redirige
-      } else {
-        setUser(data.session.user);
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+
+        if (!isMounted) return;
+
+        if (error || !user) {
+          router.replace("/login");
+        } else if (user.id !== ADMIN_ID) {
+          router.replace("/");
+        } else {
+          setUser(user);
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    const getProductos = async () => {
+      try {
+        const { data, error } = await supabase.from("productos").select("*");
+        if (error) {
+          throw new Error(error.message);
+        }
+        if (isMounted) {
+          setProductos(data);
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     checkUser();
-  }, [router]);
+    getProductos();
 
-  if (!user) return <p>Cargando...</p>;
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-  const handleChange = (e) => {
-    setProducto({ ...producto, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    setImagen(e.target.files[0]);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (
-      !producto.nombre ||
-      !producto.precio ||
-      !producto.descripcion ||
-      !imagen
-    ) {
-      alert("Todos los campos son obligatorios");
-      return;
-    }
-
+  const handleProductAdded = async () => {
+    setLoading(true);
     try {
-      // Subir la imagen al bucket
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("imagenes_productos")
-        .upload(`productos/${imagen.name}`, imagen);
-
-      if (uploadError) {
-        console.error("Error al subir la imagen:", uploadError);
-        return;
-      }
-
-      // Obtener la URL pública de la imagen
-      const { data: publicUrlData, error: urlError } = supabase.storage
-        .from("imagenes_productos")
-        .getPublicUrl(`productos/${imagen.name}`);
-
-      if (urlError) {
-        console.error("Error al obtener la URL pública:", urlError);
-        return;
-      }
-
-      const imageUrl = publicUrlData.publicUrl;
-      console.log("URL de la imagen:", imageUrl); // Verifica si se obtiene correctamente la URL
-
-      // Insertar el producto con la URL de la imagen
-      const { data, error } = await supabase.from("productos").insert([
-        {
-          nombre: producto.nombre,
-          precio: parseFloat(producto.precio),
-          descripcion: producto.descripcion,
-          imagen_url: imageUrl, // Guardar la URL pública aquí
-        },
-      ]);
-
+      const { data, error } = await supabase.from("productos").select("*");
       if (error) {
-        console.error("Error al subir producto:", error);
-        alert(`Error: ${error.message}`);
-      } else {
-        alert("Producto subido correctamente");
-        setProducto({
-          nombre: "",
-          precio: "",
-          descripcion: "",
-        });
-        setImagen(null); // Resetear la imagen
+        throw new Error(error.message);
       }
-    } catch (err) {
-      console.error("Error inesperado:", err);
-      alert("Ocurrió un error inesperado");
+      setProductos(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleProductDeleted = (productoId) => {
+    setProductos(productos.filter((p) => p.id !== productoId));
+  };
+
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="w-full flex flex-col items-center">
-      <h1>Subir Producto</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4"
-        style={{ color: "black" }}
-      >
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre"
-          value={producto.nombre}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          name="precio"
-          placeholder="Precio"
-          value={producto.precio}
-          onChange={handleChange}
-        />
-        <textarea
-          name="descripcion"
-          placeholder="Descripción"
-          value={producto.descripcion}
-          onChange={handleChange}
-        />
-        {/* Input para seleccionar archivo */}
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        <button type="submit" style={{ color: "white" }}>
-          Guardar Producto
-        </button>
-      </form>
+    <div className="flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-4">Panel de Administración</h1>
+      <AdminForm onProductAdded={handleProductAdded} />
+      <ProductList
+        productos={productos}
+        onProductDeleted={handleProductDeleted}
+      />
     </div>
   );
 }
