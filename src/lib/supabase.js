@@ -5,6 +5,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// 🔹 Función para obtener productos desde Supabase
 export async function fetchProductos() {
   const { data, error } = await supabase.from("productos").select("*");
 
@@ -15,5 +16,6 @@ export async function fetchProductos() {
 
   console.log("productos obtenidos", data);
 
+  console.log("Producto agregado:", data);
   return data;
 }

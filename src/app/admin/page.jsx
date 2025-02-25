@@ -1,91 +1,34 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
+import { useProductos } from "@/hooks/useProductos";
 import AdminForm from "@/components/Admin/AdminForm";
 import ProductList from "@/components/Admin/ProductList";
 
-const ADMIN_ID = "4594c8df-8981-42dd-aed4-9b3daf4ade94";
-
 export default function Admin() {
-  const [user, setUser] = useState(undefined);
-  const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const router = useRouter();
+  const { user, loading: authLoading, error: authError } = useAuth();
+  const {
+    productos,
+    setProductos,
+    loading: productosLoading,
+    error: productosError,
+    refreshProductos,
+  } = useProductos();
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const checkUser = async () => {
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
-
-        if (!isMounted) return;
-
-        if (error || !user) {
-          router.replace("/login");
-        } else if (user.id !== ADMIN_ID) {
-          router.replace("/");
-        } else {
-          setUser(user);
-        }
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    const getProductos = async () => {
-      try {
-        const { data, error } = await supabase.from("productos").select("*");
-        if (error) {
-          throw new Error(error.message);
-        }
-        if (isMounted) {
-          setProductos(data);
-        }
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    checkUser();
-    getProductos();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const [producto, setProducto] = useState({
+    nombre: "",
+    precio: "",
+    descripcion: "",
+  });
+  const [imagen, setImagen] = useState(null);
+  const [refresh, setRefresh] = useState(false);
 
   const handleProductAdded = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.from("productos").select("*");
-      if (error) {
-        throw new Error(error.message);
-      }
-      setProductos(data);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
+    await refreshProductos();
   };
 
   const handleProductDeleted = (productoId) => {
     setProductos(productos.filter((p) => p.id !== productoId));
   };
-
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="flex flex-col items-center">

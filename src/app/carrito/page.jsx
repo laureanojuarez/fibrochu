@@ -15,7 +15,7 @@ export default function Carrito() {
   };
 
   return (
-    <section className="w-full flex flex-col justify-center">
+    <section>
       <div className="flex items-center w-[90%] pl-4  border-b border-orange-200 h-14">
         <Link href="/">
           <IoChevronBack size={"25px"} />
