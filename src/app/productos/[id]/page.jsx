@@ -1,36 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { useParams } from "next/navigation";
 
 export default function ProductoDetalle() {
   const { id } = useParams();
-  const [producto, setProducto] = useState(null);
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!id) return;
+  const mockProducts = [
+    {
+      id: 1,
+      nombre: "Producto 1",
+      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      precio: 100,
+      imagen_url: "https://via.placeholder.com/300",
+    },
+    {
+      id: 2,
+      nombre: "Producto 2",
+      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      precio: 200,
+      imagen_url: "https://via.placeholder.com/300",
+    },
+    {
+      id: 3,
+      nombre: "Producto 3",
+      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      precio: 300,
+      imagen_url: "https://via.placeholder.com/300",
+    },
+  ];
 
-    const getProducto = async () => {
-      const { data, error } = await supabase
-        .from("productos")
-        .select("*")
-        .eq("id", id)
-        .single(); // 🔹 Obtiene un solo producto
+  const productoId = parseInt(id, 10);
+  const producto = mockProducts.find((p) => p.id === productoId);
 
-      if (error) {
-        console.error("Error al obtener producto:", error);
-        router.replace("/"); // 🔹 Redirige si no existe
-      } else {
-        setProducto(data);
-      }
-    };
-
-    getProducto();
-  }, [id, router]);
-
-  if (!producto) return <p>Cargando...</p>;
+  if (!producto) {
+    return <div>Producto no encontrado</div>;
+  }
 
   return (
     <div className="flex flex-col items-center p-4">

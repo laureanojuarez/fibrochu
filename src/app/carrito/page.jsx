@@ -2,17 +2,9 @@
 
 import { IoChevronBack } from "react-icons/io5";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { clearCart } from "@/features/cartSlice";
-import { ListCart } from "./ListCart";
 
 export default function Carrito() {
-  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
-
-  const handleClearCart = () => {
-    dispatch(clearCart());
-  };
 
   console.log(cart);
 
@@ -37,6 +29,10 @@ export default function Carrito() {
             >
               ELIMINAR TODO DEL CARRITO
             </button>
+            <button
+              onClick={handleCheckout}
+              className="mt-4 p-2 bg-blue-600 text-white rounded-md"
+            />
           </div>
         ) : (
           <p>No hay productos en el carrito.</p>
