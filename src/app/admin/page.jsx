@@ -1,5 +1,6 @@
 "use client";
 
+import { addProduct } from "@/components/AddProduct";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 
@@ -7,7 +8,7 @@ export default function Admin() {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
-  // const [imagen, setImagen] = useState(null);
+  const [imagen, setImagen] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +27,10 @@ export default function Admin() {
         <div className="flex items-center justify-evenly w-full">
           <h1 className="text-3xl font-bold mb-4">Panel de Administración</h1>
         </div>
-        <form className="flex flex-col items-center gap-4 w-full max-w-md">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center gap-4 w-full max-w-md"
+        >
           <input
             type="text"
             placeholder="Nombre del Producto"
