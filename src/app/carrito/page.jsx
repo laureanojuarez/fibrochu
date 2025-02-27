@@ -2,11 +2,14 @@
 
 import { IoChevronBack } from "react-icons/io5";
 import Link from "next/link";
+import { useCart } from "./useCart";
 
 export default function Carrito() {
-  const cart = useSelector((state) => state.cart);
+  const { cart, handleClearCart, handleRemoveFromCart } = useCart();
 
-  console.log(cart);
+  const handleCheckout = () => {
+    console.log("Checkout");
+  };
 
   return (
     <section className="flex flex-col items-center w-full ">
@@ -20,9 +23,27 @@ export default function Carrito() {
         <h1 className="text-2xl font-bold ">TUS PRODUCTOS:</h1>
         {cart.length > 0 ? (
           <div className="flex flex-col gap-2 ">
-            {cart.map((item, index) => (
-              <ListCart key={index} index={index} item={item} />
+            {cart.map((product, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between border p-2 rounded-md"
+              >
+                <div>
+                  <h2 className="text-lg font-bold">{product.nombre}</h2>
+                  <p className="text-sm">{product.descripcion}</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <p className="text-lg">${product.precio}</p>
+                  <button
+                    onClick={() => handleRemoveFromCart(index)}
+                    className="text-red-500"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
             ))}
+
             <button
               onClick={handleClearCart}
               className="mt-4 p-2 bg-red-600 text-white rounded-md"
@@ -32,7 +53,9 @@ export default function Carrito() {
             <button
               onClick={handleCheckout}
               className="mt-4 p-2 bg-blue-600 text-white rounded-md"
-            />
+            >
+              Comprar
+            </button>
           </div>
         ) : (
           <p>No hay productos en el carrito.</p>
