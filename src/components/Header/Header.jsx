@@ -6,16 +6,22 @@ import { FaUser } from "react-icons/fa";
 
 export const Header = () => {
   return (
-    <header className="flex justify-evenly items-center px-8 bg-gray-800 ">
-      <Link href="/">
-        <Image src={fibrochu} alt="fibrochu" width={200} height={75} />
+    <header className="flex justify-between items-center px-8 bg-gray-700 shadow-md">
+      <Link href="/" className="flex items-center">
+        <Image src={fibrochu} alt="fibrochu" width={130} />
       </Link>
-      <div className="flex gap-4">
-        <Link href="/admin">
-          <FaUser size={"1.5rem"} className="text-white" />
+      <div className="flex gap-6">
+        <Link
+          href="/admin"
+          className="text-white hover:text-gray-400 transition-colors duration-300"
+        >
+          <FaUser size={"1.5rem"} />
         </Link>
-        <Link href="/carrito">
-          <MdOutlineShoppingCart size={"1.5rem"} className="text-white" />
+        <Link
+          href="/carrito"
+          className="text-white hover:text-gray-400 transition-colors duration-300"
+        >
+          <MdOutlineShoppingCart size={"1.5rem"} />
         </Link>
       </div>
     </header>

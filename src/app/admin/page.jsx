@@ -1,7 +1,8 @@
 "use client";
 
-import { addProduct } from "@/components/AddProduct";
+import ProductList from "@/components/ProductList";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { addProduct } from "@/lib/supabase";
 import { useState } from "react";
 
 export default function Admin() {
@@ -9,15 +10,28 @@ export default function Admin() {
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      await addProduct({ nombre, descripcion, precio, imagen });
-      alert("Producto subido con éxito");
+      const newProduct = await addProduct({
+        nombre,
+        descripcion,
+        precio: parseFloat(precio), // Asegúrate de que el precio sea un número
+        imagen,
+        createdAt: new Date().toISOString(),
+      });
+
+      console.log("Producto agregado:", newProduct);
+      alert("Producto agregado correctamente");
     } catch (error) {
-      console.error("Error al subir el producto: ", error);
-      alert("Error al subir el producto");
+      console.error("Error:", error.message);
+      alert("Error al agregar el producto");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,6 +51,7 @@ export default function Admin() {
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           />
           <textarea
             placeholder="Descripción del Producto"
@@ -50,19 +65,20 @@ export default function Admin() {
             value={precio}
             onChange={(e) => setPrecio(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           />
           <input
             type="file"
             onChange={(e) => setImagen(e.target.files[0])}
+            accept="image/*"
             className="w-full p-2 border border-gray-300 rounded-md"
           />
-          <button
-            type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Subir Producto
+          <button type="submit" disabled={loading}>
+            {loading ? "Agregando..." : "Agregar Producto"}
           </button>
         </form>
+
+        <ProductList isAdmin={true} />
       </section>
     </ProtectedRoute>
   );
