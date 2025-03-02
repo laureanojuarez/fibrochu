@@ -1,9 +1,10 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import { deleteProduct, fetchProducts } from "@/lib/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { deleteProduct } from "./DeleteProducts";
+import { supabase } from "@/utils/supabase/client";
 
 export default function ProductList({ isAdmin }) {
   // Obtener los productos al cargar el componente
@@ -13,9 +14,10 @@ export default function ProductList({ isAdmin }) {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const fetchProducts = async () => {
       try {
-        const data = await fetchProducts();
+        const { data, error } = await supabase.from("productos").select("*");
+        if (error) throw error;
         setProducts(data);
       } catch (error) {
         setError(error.message);
@@ -24,7 +26,7 @@ export default function ProductList({ isAdmin }) {
       }
     };
 
-    loadProducts();
+    fetchProducts();
   }, []);
 
   const handleDelete = async (id, imageUrl) => {
@@ -81,6 +83,7 @@ export default function ProductList({ isAdmin }) {
               {isAdmin && (
                 <button
                   onClick={() => handleDelete(product.id, product.imagen)}
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
                 >
                   Eliminar
                 </button>

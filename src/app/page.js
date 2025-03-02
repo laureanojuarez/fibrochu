@@ -1,7 +1,6 @@
 "use client";
 
-import ProductList from "@/components/ProductList";
-import { CartProvider } from "@/context/CartContext";
+import ProductList from "@/components/Products/ProductList";
 
 export default function Home() {
   return (

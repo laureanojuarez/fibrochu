@@ -1,11 +1,9 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
 export default function Carrito() {
   const { cart, removeFromCart } = useCart();
-  const { user } = useAuth();
 
   const handlePayment = async () => {
     if (!user) {

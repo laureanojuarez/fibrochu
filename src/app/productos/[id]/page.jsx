@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchProducts } from "@/lib/supabase";
+import { fetchProducts } from "../../../utils/supabase/server";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

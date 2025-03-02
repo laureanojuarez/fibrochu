@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import MercadoPagoConfig, { Preference } from "mercadopago";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../../../utils/supabase/server";
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
