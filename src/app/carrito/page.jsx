@@ -1,66 +1,72 @@
 "use client";
 
-import { IoChevronBack } from "react-icons/io5";
-import Link from "next/link";
-import { useCart } from "./useCart";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 export default function Carrito() {
-  const { cart, handleClearCart, handleRemoveFromCart } = useCart();
+  const { cart, removeFromCart } = useCart();
+  const { user } = useAuth();
 
-  const handleCheckout = () => {
-    console.log("Checkout");
+  const handlePayment = async () => {
+    if (!user) {
+      alert("Por favor, inicia sesión para continuar con el pago.");
+      return;
+    }
+
+    const res = await fetch("/api/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: "Cuadro personalizado",
+        price: 10000,
+        quantity: 1,
+        email: user.email, // Usuario autenticado
+      }),
+    });
+
+    const data = await res.json();
+    if (data.id) {
+      window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${data.id}`;
+    }
   };
-
   return (
-    <section className="flex flex-col items-center w-full ">
-      <div className="flex items-center w-full border-b border-orange-200 h-14 mb-4">
-        <Link href="/">
-          <IoChevronBack size={"25px"} />
-        </Link>
-        <span className="ml-4 text-xl">Carrito de compras</span>
-      </div>
-      <div className="w-full max-w-4xl">
-        <h1 className="text-2xl font-bold ">TUS PRODUCTOS:</h1>
-        {cart.length > 0 ? (
-          <div className="flex flex-col gap-2 ">
-            {cart.map((product, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between border p-2 rounded-md"
-              >
-                <div>
-                  <h2 className="text-lg font-bold">{product.nombre}</h2>
-                  <p className="text-sm">{product.descripcion}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <p className="text-lg">${product.precio}</p>
-                  <button
-                    onClick={() => handleRemoveFromCart(index)}
-                    className="text-red-500"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            ))}
+    <section className="container mx-auto p-4">
+      <h2 className="text-3xl font-bold mb-6 text-center">
+        Carrito de Compras
+      </h2>
 
-            <button
-              onClick={handleClearCart}
-              className="mt-4 p-2 bg-red-600 text-white rounded-md"
+      {cart.length === 0 ? (
+        <p className="text-center text-gray-500">Tu carrito está vacío.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {cart.map((product) => (
+            <div
+              key={product.id}
+              className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
             >
-              ELIMINAR TODO DEL CARRITO
-            </button>
-            <button
-              onClick={handleCheckout}
-              className="mt-4 p-2 bg-blue-600 text-white rounded-md"
-            >
-              Comprar
-            </button>
-          </div>
-        ) : (
-          <p>No hay productos en el carrito.</p>
-        )}
-      </div>
+              {product.imagen && (
+                <img
+                  src={product.imagen}
+                  alt={product.nombre}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+              )}
+              <h3 className="text-xl font-semibold mb-2">{product.nombre}</h3>
+              <p className="text-gray-700 mb-4">{product.descripcion}</p>
+              <p className="text-lg font-bold">Precio: ${product.precio}</p>
+              <button
+                onClick={() => removeFromCart(product.id)}
+                className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md"
+              >
+                Eliminar del Carrito
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <button onClick={handlePayment}>Proceder al pago</button>
     </section>
   );
 }

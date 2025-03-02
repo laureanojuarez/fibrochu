@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import fibrochu from "../../assets/fibrochu.png";
+import fibrochu from "../../app/fibrochu.png";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 

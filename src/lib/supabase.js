@@ -6,8 +6,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Función para obtener los productos de la tabla
 
-export const fetchProducts = async () => {
-  const { data, error } = await supabase.from("productos").select("*");
+export const fetchProducts = async (id) => {
+  let query = supabase.from("productos").select("*");
+
+  if (id) {
+    query = query.eq("id", id).single();
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw error;

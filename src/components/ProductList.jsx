@@ -1,6 +1,8 @@
 "use client";
 
+import { useCart } from "@/context/CartContext";
 import { deleteProduct, fetchProducts } from "@/lib/supabase";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function ProductList({ isAdmin }) {
@@ -8,6 +10,7 @@ export default function ProductList({ isAdmin }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -61,15 +64,20 @@ export default function ProductList({ isAdmin }) {
               className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               {product.imagen && (
-                <img
-                  src={product.imagen}
-                  alt={product.nombre}
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
+                <Link href={`/productos/${product.id}`}>
+                  <img
+                    src={product.imagen}
+                    alt={product.nombre}
+                    className="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                </Link>
               )}
               <h3 className="text-xl font-semibold mb-2">{product.nombre}</h3>
               <p className="text-gray-700 mb-4">{product.descripcion}</p>
-              <p className="text-lg font-bold">Precio: ${product.precio}</p>
+              <div className="flex">
+                <p className="text-lg font-bold">Precio: ${product.precio}</p>
+                <button onClick={() => addToCart(product)}>Comprar</button>
+              </div>
               {isAdmin && (
                 <button
                   onClick={() => handleDelete(product.id, product.imagen)}

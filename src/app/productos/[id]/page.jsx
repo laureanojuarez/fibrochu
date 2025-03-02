@@ -1,36 +1,37 @@
 "use client";
 
+import { fetchProducts } from "@/lib/supabase";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ProductoDetalle() {
   const { id } = useParams();
+  const [producto, setProducto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const mockProducts = [
-    {
-      id: 1,
-      nombre: "Producto 1",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      precio: 100,
-      imagen_url: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      nombre: "Producto 2",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      precio: 200,
-      imagen_url: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      nombre: "Producto 3",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      precio: 300,
-      imagen_url: "https://via.placeholder.com/300",
-    },
-  ];
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const data = await fetchProducts(id);
+        setProducto(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const productoId = parseInt(id, 10);
-  const producto = mockProducts.find((p) => p.id === productoId);
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   if (!producto) {
     return <div>Producto no encontrado</div>;
@@ -40,7 +41,7 @@ export default function ProductoDetalle() {
     <div className="flex flex-col items-center p-4">
       <h1 className="text-2xl font-bold">{producto.nombre}</h1>
       <img
-        src={producto.imagen_url}
+        src={producto.imagen}
         alt={producto.nombre}
         className="w-96 h-auto my-4"
       />
