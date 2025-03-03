@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchProducts } from "../../../utils/supabase/server";
+import { useAuth } from "@/context/AuthContext";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,9 +11,19 @@ export default function ProductoDetalle() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchProduct = async (id) => {
+      const { data, error } = await supabase
+        .from("productos")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    };
+
     const loadProduct = async () => {
       try {
-        const data = await fetchProducts(id);
+        const data = await fetchProduct(id);
         setProducto(data);
       } catch (error) {
         setError(error.message);

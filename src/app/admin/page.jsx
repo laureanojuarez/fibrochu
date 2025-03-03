@@ -2,34 +2,28 @@
 
 import ProductList from "@/components/Products/ProductList";
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { addProduct } from "@/components/Products/AddProduct";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Admin() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const allowedUserId = "d27f9f61-39b6-426f-9c34-cde7a4b63e8d";
 
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
+  const [stock, setStock] = useState(0);
+
   const [imagen, setImagen] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-
-      if (!user || user.id !== allowedUserId) {
-        router.push("/auth");
-      }
-    };
-    getUser();
-  }, [router]);
+    if (!user || user.id !== allowedUserId) {
+      router.push("/auth");
+    }
+  }, [user, router]);
 
   if (!user || user.id !== allowedUserId) {
     return <p>Loading...</p>;
@@ -44,6 +38,7 @@ export default function Admin() {
         nombre,
         descripcion,
         precio: parseFloat(precio), // Asegúrate de que el precio sea un número
+        stock: parseInt(stock), // Asegúrate de que el stock sea un número
         imagen,
         createdAt: new Date().toISOString(),
       });
@@ -86,6 +81,14 @@ export default function Admin() {
           placeholder="Precio"
           value={precio}
           onChange={(e) => setPrecio(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md"
+          required
+        />
+        <input
+          type="number"
+          placeholder="Precio"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md"
           required
         />

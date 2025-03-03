@@ -51,7 +51,7 @@ export default function ProductList({ isAdmin }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-6 text-center">
+      <h2 className="text-3xl font-bold mb-6 text-center ">
         Catálogo de productos
       </h2>
       {products.length === 0 ? (
@@ -63,7 +63,7 @@ export default function ProductList({ isAdmin }) {
           {products.map((product) => (
             <div
               key={product.id}
-              className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 bg-gray-700"
             >
               {product.imagen && (
                 <Link href={`/productos/${product.id}`}>
@@ -74,16 +74,17 @@ export default function ProductList({ isAdmin }) {
                   />
                 </Link>
               )}
-              <h3 className="text-xl font-semibold mb-2">{product.nombre}</h3>
-              <p className="text-gray-700 mb-4">{product.descripcion}</p>
-              <div className="flex">
-                <p className="text-lg font-bold">Precio: ${product.precio}</p>
-                <button onClick={() => addToCart(product)}>Comprar</button>
+              <h3 className="text-xl font-semibold mb-2 ">{product.nombre}</h3>
+              <p>{product.descripcion}</p>
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-lg font-bold ">Precio: ${product.precio}</p>
+                <p>Stock: {product.stock}</p>
               </div>
+              <button onClick={() => addToCart(product)}>Comprar</button>
               {isAdmin && (
                 <button
                   onClick={() => handleDelete(product.id, product.imagen)}
-                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors duration-300"
                 >
                   Eliminar
                 </button>

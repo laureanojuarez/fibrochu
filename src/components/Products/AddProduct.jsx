@@ -41,6 +41,7 @@ export const addProduct = async ({
         nombre,
         descripcion,
         precio,
+        stock,
         imagen: imageUrl,
         createdAt,
       },

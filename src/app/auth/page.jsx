@@ -39,7 +39,6 @@ export default function Auth() {
       console.error("Error signing out:", error.message);
     }
   };
-
   return (
     <div>
       {user ? (

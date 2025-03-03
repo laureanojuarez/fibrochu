@@ -48,7 +48,7 @@ button {
   color: var(--background);
   border: none;
   border-radius: var(--border-radius);
-  padding: 0.5em 1em;
+  padding: 0.2em 1em;
   cursor: pointer;
   transition: background-color var(--transition-duration), color var(--transition-duration);
 }

@@ -1,15 +1,23 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
 export default function Carrito() {
   const { cart, removeFromCart } = useCart();
-
+  const { user } = useAuth();
   const handlePayment = async () => {
     if (!user) {
       alert("Por favor, inicia sesión para continuar con el pago.");
       return;
     }
+
+    const items = cart.map((product) => ({
+      title: product.nombre,
+      unit_price: parseFloat(product.precio),
+      quantity: 1, // Puedes ajustar esto si tienes cantidades diferentes
+      currency_id: "ARS",
+    }));
 
     const res = await fetch("/api/payments", {
       method: "POST",
@@ -17,9 +25,7 @@ export default function Carrito() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: "Cuadro personalizado",
-        price: 10000,
-        quantity: 1,
+        items,
         email: user.email, // Usuario autenticado
       }),
     });
