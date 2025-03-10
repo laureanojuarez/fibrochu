@@ -3,23 +3,25 @@ import { login, signup } from "./actions";
 
 export default function LoginPage() {
   return (
-    <section className="flex justify-center items-center h-screen bg-indigo-300">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form className="flex flex-col gap-4">
+    <section className=" flex items-center justify-center bg-gradient-to-r ">
+      <div className="bg-white rounded-xl shadow-xl p-10 max-w-md w-full">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          Iniciar Sesión
+        </h2>
+        <form className="space-y-6">
           <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              Email:
+              Correo Electrónico
             </label>
             <input
               id="email"
               name="email"
               type="email"
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div>
@@ -27,32 +29,35 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
             >
-              Password:
+              Contraseña
             </label>
             <input
               id="password"
               name="password"
               type="password"
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex gap-4">
             <button
+              type="submit"
               formAction={login}
-              className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
             >
-              Log in
+              Iniciar Sesión
             </button>
             <button
+              type="submit"
               formAction={signup}
-              className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              className="flex-1 py-2 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
             >
-              Sign up
+              Registrarse
             </button>
           </div>
         </form>
-        <div className="mt-6">
+        <p className="text-center text-gray-600 mt-6">O inicia sesión con</p>
+        <div className="mt-4">
           <AuthButtonServer />
         </div>
       </div>

@@ -8,14 +8,13 @@ export default function Carrito() {
 
   async function handleCheckout() {
     const { data } = await axios.post(
-      "http://localhost:5000/create_preference",
+      "http://localhost:3000/api/create_preference",
       {
         items: cart.map((product) => ({
           title: product.nombre,
           description: product.descripcion,
           unit_price: product.precio,
           quantity: 1,
-          currency_id: "ARS",
         })),
       }
     );

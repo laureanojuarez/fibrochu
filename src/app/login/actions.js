@@ -2,11 +2,10 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/dist/server/api-utils";
-import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function login(formData) {
-  const supabase = await createClient({ cookies });
+  const supabase = await createClient();
 
   const data = {
     email: formData.get("email"),
@@ -24,7 +23,7 @@ export async function login(formData) {
 }
 
 export async function signup(formData) {
-  const supabase = await createServer();
+  const supabase = await createClient();
 
   const data = {
     email: formData.get("email"),
