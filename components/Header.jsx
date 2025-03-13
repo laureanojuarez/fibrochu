@@ -13,13 +13,11 @@ const Header = async () => {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="flex justify-evenly items-center px-8 bg-stone-800 h-24">
+    <header className="flex justify-evenly items-center px-8 bg-rose-400 h-24 border-b border-gray-700">
       <Link href="/" className="flex items-center">
         <Image src={fibrochu} alt="fibrochu" width={130} />
       </Link>
       <nav className="flex items-center gap-6">
-        <Link href={"/auth/dashboard"}>ADMIN</Link>
-
         {!user ? (
           <Link
             href={"/login"}
@@ -28,10 +26,9 @@ const Header = async () => {
             <FaUser size={"1.5rem"} />
           </Link>
         ) : (
-          <>
-            <div>{user?.email}</div>
+          <div className="flex flex-col items-center">
             <Logout />
-          </>
+          </div>
         )}
 
         <Link

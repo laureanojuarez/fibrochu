@@ -1,27 +1,16 @@
-import { createClient } from "@/utils/supabase/server";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { getProductos } from "../getProducts";
 
 export async function CatalogoClient() {
-  const supabase = await createClient();
-
-  const { data: productos, error } = await supabase
-    .from("productos")
-    .select("*");
-
-  if (!productos || productos.length === 0) {
-    return (
-      <p className="text-center text-white">No hay productos disponibles.</p>
-    );
-  }
+  const productos = await getProductos();
 
   return (
-    <div className="flex flex-col gap-4 items-center">
-      <h2 className="text-3xl font-bold mb-6 text-center">
-        Catálogo de productos
-      </h2>
+    <div className="flex flex-col items-center p-4">
+      <h2 className="text-3xl font-bold text-center">Catálogo de productos</h2>
       {productos.length === 0 ? (
         <p className="text-center text-white">No hay productos disponibles.</p>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6 max-w-7xl mx-auto px-4">
+        <div className="flex gap-4 flex-wrap p-4">
           {productos.map((producto) => (
             <div
               key={producto.id}
@@ -39,10 +28,13 @@ export async function CatalogoClient() {
                 <p className="text-gray-700 mb-2 flex-grow">
                   {producto.descripcion}
                 </p>
-                <div className="mt-auto">
-                  <p className="text-gray-700 text-lg font-bold mb-4">
+                <div className="flex items-center justify-between text-center">
+                  <p className="text-gray-700 text-lg font-bold ">
                     ${producto.precio}
                   </p>
+                  <div className="bg-rose-300 p-2 rounded-xl">
+                    <MdOutlineShoppingCart className="cursor-pointer" />
+                  </div>
                 </div>
               </div>
             </div>

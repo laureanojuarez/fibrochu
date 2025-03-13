@@ -9,7 +9,7 @@ initMercadoPago("APP_USR-0bb9f181-1abf-4ac4-854f-fbf60fdd7e17");
 
 export default function CarritoClient() {
   const [preferenceId, setPreferenceId] = useState(null);
-
+  const [cart, setCart] = useState([]);
   const total = cart.reduce((acc, product) => acc + Number(product.precio), 0);
 
   async function handleCheckout() {
