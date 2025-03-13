@@ -1,4 +1,4 @@
-import SignUpForm from "@/components/Auth/singup-form";
+import SignUpForm from "@/components/Auth/SingupForm";
 import Link from "next/link";
 import React from "react";
 

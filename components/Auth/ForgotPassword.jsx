@@ -1,14 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
+import { forgotPassword } from "@/app/(auth)/login/actions";
 import AuthButton from "./AuthButton";
 
 const ForgotPassword = () => {
-  const [error, setError] = (useState < string) | (null > null);
-  const [loading, setLoading] = useState < boolean > false;
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    const result = await forgotPassword(formData);
+
+    if (result.status === "success") {
+      alert("Password reset link sent to your email");
+    } else {
+      setError(result.status);
+    }
 
     setLoading(false);
   };

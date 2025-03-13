@@ -1,24 +1,23 @@
 "use client";
 import React, { useState } from "react";
+import AuthButton from "./AuthButton";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/app/(auth)/login/actions";
-import AuthButton from "./auth-button";
-// import { useRouter } from "next/navigation";
+import { signIn } from "@/app/(auth)/login/actions";
 
-const SignUpForm = () => {
+const LoginForm = () => {
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
 
     const formData = new FormData(event.currentTarget);
-    const result = await signUp(formData);
+    const result = await signIn(formData);
 
     if (result.status === "success") {
-      router.push("/login");
+      router.push("/");
     } else {
       setError(result.status);
     }
@@ -29,17 +28,9 @@ const SignUpForm = () => {
     <div>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium ">Username</label>
-          <input
-            type="text"
-            placeholder="Username"
-            id="username"
-            name="username"
-            className="mt-1 w-full px-4 p-2  h-10 rounded-md border border-gray-200 bg-white text-sm text-gray-700"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium ">Email</label>
+          <label className="block text-sm font-medium text-gray-200">
+            Email
+          </label>
           <input
             type="email"
             placeholder="Email"
@@ -49,7 +40,9 @@ const SignUpForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium ">Password</label>
+          <label className="block text-sm font-medium text-gray-200">
+            Password
+          </label>
           <input
             type="password"
             placeholder="Password"
@@ -59,7 +52,7 @@ const SignUpForm = () => {
           />
         </div>
         <div className="mt-4">
-          <AuthButton type="Sign up" loading={loading} />
+          <AuthButton type="login" loading={loading} />
         </div>
         {error && <p className="text-red-500">{error}</p>}
       </form>
@@ -67,4 +60,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default LoginForm;

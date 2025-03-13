@@ -1,14 +1,14 @@
-import ResetPassword from "@/components/Auth/ResetPassword";
+import ForgotPassword from "@/components/Auth/ForgotPassword";
 
-export default function ResetPasswordPage() {
+export default function ForgotPasswordPage() {
   return (
     <>
       <div className="w-full flex mt-20 justify-center">
         <section className="flex flex-col w-[400px]">
           <h1 className="text-3xl w-full text-center font-bold mb-6">
-            Reset Password
+            Forgot Password
           </h1>
-          <ResetPassword />
+          <ForgotPassword />
         </section>
       </div>
     </>

@@ -4,7 +4,7 @@ import fibrochu from "@/app/fibrochu.png";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
-import Logout from "./Auth/logout";
+import Logout from "./Auth/Logout";
 
 const Header = async () => {
   const supabase = await createClient();
