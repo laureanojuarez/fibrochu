@@ -15,11 +15,9 @@ export async function GET(request) {
       token_hash,
     });
     if (!error) {
-      // redirect user to specified redirect URL or root of app
       redirect(next);
     }
   }
 
-  // redirect the user to an error page with some instructions
   redirect("/error");
 }
