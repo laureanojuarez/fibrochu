@@ -1,4 +1,4 @@
-import { getProductos } from "@/components/getProducts";
+import { getProductos } from "@/components/getProductos";
 import DashboardForm from "./DashboardForm";
 
 function ProductList({ productos }) {

@@ -1,9 +1,9 @@
-import { CatalogoClient } from "@/components/Catalogo/catalogo-client";
+import { ProductsClient } from "@/components/Products";
 
 export default function Home() {
   return (
     <main>
-      <CatalogoClient />
+      <ProductsClient />
     </main>
   );
 }
