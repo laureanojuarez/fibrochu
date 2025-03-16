@@ -15,7 +15,7 @@ const ForgotPassword = () => {
     const result = await forgotPassword(formData);
 
     if (result.status === "success") {
-      alert("Password reset link sent to your email");
+      alert("Se ha enviado un enalce para restablecer tu contraseña");
     } else {
       setError(result.status);
     }
@@ -39,7 +39,7 @@ const ForgotPassword = () => {
         </div>
 
         <div className="mt-4">
-          <AuthButton type="Forgot Password" loading={loading} />
+          <AuthButton type="Recuperar" loading={loading} />
         </div>
         {error && <p className="text-red-500">{error}</p>}
       </form>

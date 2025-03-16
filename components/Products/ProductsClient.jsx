@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ProductGrid } from "./ProductGrid";
+import { ProductList } from "./ProductList";
 import { ProductFilter } from "./ProductFilter";
-import { ProductSearch } from "./ProductSearch";
 import { ProductSort } from "./ProductSort";
+import { useSearchParams } from "next/navigation";
 
 export default function ProductsClient() {
+  const searchParams = useSearchParams();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredProductos, setFilteredProductos] = useState([]);
@@ -17,6 +18,14 @@ export default function ProductsClient() {
     searchQuery: "",
     sort: "newest", // newest, price-low, price-high
   });
+
+  useEffect(() => {
+    const query = searchParams.get("q");
+    setFilters((prev) => ({
+      ...prev,
+      searchQuery: query || "",
+    }));
+  }, [searchParams]);
 
   useEffect(() => {
     async function fetchProductos() {
@@ -85,39 +94,42 @@ export default function ProductsClient() {
     );
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Catálogo de Productos
-      </h1>
+    <section className="bg-gray-50 min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+          Catálogo de Productos
+        </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="md:col-span-1">
-          <ProductFilter
-            filters={filters}
-            setFilters={setFilters}
-            productos={productos}
-          />
-        </div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar con filtros */}
+          <aside className="lg:w-1/4 bg-white p-6 rounded-lg shadow-sm self-start">
+            <ProductFilter
+              filters={filters}
+              setFilters={setFilters}
+              productos={productos}
+            />
+          </aside>
 
-        <div className="md:col-span-3">
-          <div className="flex justify-between items-center mb-4">
-            <ProductSearch
-              value={filters.searchQuery}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, searchQuery: value }))
-              }
-            />
-            <ProductSort
-              value={filters.sort}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, sort: value }))
-              }
-            />
+          {/* Contenido principal */}
+          <div className="lg:w-3/4">
+            <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
+              <p className="text-gray-600">
+                {filteredProductos.length} producto
+                {filteredProductos.length !== 1 && "s"} encontrado
+                {filteredProductos.length !== 1 && "s"}
+              </p>
+              <ProductSort
+                value={filters.sort}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, sort: value }))
+                }
+              />
+            </div>
+
+            <ProductList productos={filteredProductos} />
           </div>
-
-          <ProductGrid productos={filteredProductos} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
