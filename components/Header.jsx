@@ -4,12 +4,12 @@ import Image from "next/image";
 import fibrochu from "@/app/fibrochu.png";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
-import Logout from "./Auth/Logout";
 import { useCart } from "@/context/CartContext";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { ProductSearch } from "./Products";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import LogoutFunction from "./Auth/LogoutFunction";
 
 const Header = () => {
   const { toggleCart, cartItems } = useCart();
@@ -79,7 +79,7 @@ const Header = () => {
             <span>Iniciar sesión</span>
           </Link>
           <div className="flex items-center">
-            <Logout />
+            <LogoutFunction />
           </div>
           <button
             onClick={toggleCart}

@@ -2,7 +2,7 @@
 import { singOut } from "@/app/(auth)/login/actions";
 import React, { useState } from "react";
 
-const Logout = () => {
+const LogoutFunction = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async (event) => {
@@ -23,4 +23,4 @@ const Logout = () => {
   );
 };
 
-export default Logout;
+export default LogoutFunction;

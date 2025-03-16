@@ -1,4 +1,4 @@
-import { getProductos } from "@/components/getProductos";
+import { createClient } from "@/utils/supabase/server";
 import DashboardForm from "./DashboardForm";
 
 function ProductList({ productos }) {
@@ -62,8 +62,23 @@ function ProductList({ productos }) {
   );
 }
 
+async function getProductosAdmin() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("productos")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching productos:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 export default async function DashboardPage() {
-  const productos = await getProductos();
+  const productos = await getProductosAdmin();
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
