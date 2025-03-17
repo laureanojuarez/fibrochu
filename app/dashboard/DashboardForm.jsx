@@ -39,7 +39,7 @@ export default function DashboardForm() {
     }
 
     try {
-      await axios.post("/api/products", formData, {
+      await axios.post("/api/productos", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       // Se refresca la página para mostrar el nuevo listado
