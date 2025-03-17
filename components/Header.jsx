@@ -6,7 +6,6 @@ import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { ProductSearch } from "./Products";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LogoutFunction from "./Auth/LogoutFunction";
@@ -88,14 +87,6 @@ const Header = () => {
               )}
             </button>
           </div>
-        </div>
-
-        <div className="flex-grow max-w-xl mx-auto md:mx-0">
-          <ProductSearch
-            value={searchQuery}
-            onChange={handleSearch}
-            placeholder="Buscar productos..."
-          />
         </div>
 
         <nav className="hidden md:flex items-center gap-6">

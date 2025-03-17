@@ -30,10 +30,10 @@ export const CartProvider = ({ children }) => {
       }
     });
   };
-
-  const removeFromCart = (product) => {
+  const removeFromCart = (id) => {
+    // Changed product to id
     setCartItems((prevItems) => {
-      return prevItems.filter((item) => item.id !== product.id);
+      return prevItems.filter((item) => item.id !== id); // Changed product.id to id
     });
   };
 

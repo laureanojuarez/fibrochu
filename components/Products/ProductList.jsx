@@ -1,41 +1,42 @@
-"use client";
-
-import { ProductCard } from "./ProductCard";
-import { useState } from "react";
+import { ProductCard } from ".";
 
 export function ProductList({ productos }) {
-  // Para añadir un pequeño efecto de entrada
-  const [loaded, setLoaded] = useState(false);
-
-  setTimeout(() => setLoaded(true), 100);
-
-  if (!productos?.length) {
+  if (!productos || productos.length === 0) {
     return (
-      <div className="bg-white rounded-lg p-10 text-center border border-gray-200">
-        <h3 className="text-xl font-medium text-gray-700 mb-2">
-          No hay productos
-        </h3>
-        <p className="text-gray-500">
-          No encontramos productos que coincidan con tu búsqueda.
+      <div className="text-center  bg-red-600  rounded-xl shadow-sm border border-gray-100">
+        <div className="mb-4 text-gray-300">
+          <svg
+            className="w-16 h-16 mx-auto"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+        </div>
+        <p className="text-gray-500 font-medium">No se encontraron productos</p>
+        <p className="text-gray-400 text-sm mt-1">
+          Intenta con otros filtros o categorías
         </p>
       </div>
     );
   }
 
   return (
-    <div
-      className={`flex flex-wrap gap-6 transition-opacity duration-500 ${
-        loaded ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      {productos.map((producto) => (
-        <div
-          key={producto.id}
-          className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
-        >
-          <ProductCard producto={producto} />
-        </div>
-      ))}
+    <div className="container mx-auto">
+      <div className="flex gap-4">
+        {productos?.map((producto) => (
+          <div key={producto.id} className="fade-in">
+            <ProductCard producto={producto} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

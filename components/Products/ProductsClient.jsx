@@ -5,19 +5,24 @@ import { ProductList } from "./ProductList";
 import { ProductFilter } from "./ProductFilter";
 import { ProductSort } from "./ProductSort";
 import { useSearchParams } from "next/navigation";
+import { useProductFilters } from "@/hooks/useProductFilters";
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filteredProductos, setFilteredProductos] = useState([]);
-  const [filters, setFilters] = useState({
+  const initialFilters = {
     category: "all",
     minPrice: 0,
     maxPrice: Infinity,
     searchQuery: "",
-    sort: "newest", // newest, price-low, price-high
-  });
+    sort: "newest",
+  };
+
+  const { filters, setFilters, filteredProductos } = useProductFilters(
+    productos,
+    initialFilters
+  );
 
   useEffect(() => {
     const query = searchParams.get("q");
@@ -30,10 +35,9 @@ export default function ProductsClient() {
   useEffect(() => {
     async function fetchProductos() {
       try {
-        const response = await fetch("/api/productos");
-        const data = await response.json();
+        const res = await fetch("/api/productos", { cache: "no-store" });
+        const data = await res.json();
         setProductos(data);
-        setFilteredProductos(data);
       } catch (error) {
         console.error("Error fetching productos:", error);
       } finally {
@@ -44,48 +48,6 @@ export default function ProductsClient() {
     fetchProductos();
   }, []);
 
-  // Aplica filtros cuando cambian
-  useEffect(() => {
-    if (!productos.length) return;
-
-    let result = [...productos];
-
-    // Filtrar por categoría
-    if (filters.category !== "all") {
-      result = result.filter((p) => p.categoria === filters.category);
-    }
-
-    // Filtrar por precio
-    result = result.filter(
-      (p) => p.precio >= filters.minPrice && p.precio <= filters.maxPrice
-    );
-
-    // Filtrar por búsqueda
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.nombre.toLowerCase().includes(query) ||
-          p.descripcion.toLowerCase().includes(query)
-      );
-    }
-
-    // Ordenar
-    switch (filters.sort) {
-      case "price-low":
-        result.sort((a, b) => a.precio - b.precio);
-        break;
-      case "price-high":
-        result.sort((a, b) => b.precio - a.precio);
-        break;
-      case "newest":
-      default:
-        result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    }
-
-    setFilteredProductos(result);
-  }, [productos, filters]);
-
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -94,40 +56,38 @@ export default function ProductsClient() {
     );
 
   return (
-    <section className="bg-gray-50 min-h-screen py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Catálogo de Productos
-        </h1>
+    <div className="flex flex-col p-4">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        Catálogo de Productos
+      </h1>
 
-        {/* Controles de filtrado y ordenamiento */}
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-          <div className="flex flex-wrap gap-3 justify-between items-center">
-            <div className="text-gray-600">
-              {filteredProductos.length} producto
-              {filteredProductos.length !== 1 && "s"} encontrado
-              {filteredProductos.length !== 1 && "s"}
-            </div>
+      {/* Controles de filtrado y ordenamiento */}
+      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <div className="flex flex-wrap gap-3 justify-between items-center">
+          <div className="text-gray-600">
+            {filteredProductos.length} producto
+            {filteredProductos.length !== 1 && "s"} encontrado
+            {filteredProductos.length !== 1 && "s"}
+          </div>
 
-            <div className="flex gap-3 items-center">
-              <ProductFilter
-                filters={filters}
-                setFilters={setFilters}
-                productos={productos}
-              />
-              <ProductSort
-                value={filters.sort}
-                onChange={(value) =>
-                  setFilters((prev) => ({ ...prev, sort: value }))
-                }
-              />
-            </div>
+          <div className="flex gap-3 items-center">
+            <ProductFilter
+              filters={filters}
+              setFilters={setFilters}
+              productos={productos}
+            />
+            <ProductSort
+              value={filters.sort}
+              onChange={(value) =>
+                setFilters((prev) => ({ ...prev, sort: value }))
+              }
+            />
           </div>
         </div>
-
-        {/* Lista de productos */}
-        <ProductList productos={filteredProductos} />
       </div>
-    </section>
+
+      {/* Lista de productos */}
+      <ProductList productos={filteredProductos} />
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { IoTrashOutline } from "react-icons/io5";
 
 const CartItem = ({ item }) => {
-  const { removeFromCart, updateCartItemCustomization } = useCart();
+  const { updateCartItemCustomization, removeFromCart } = useCart();
   const [customization, setCustomization] = useState(item.customization || "");
 
   useEffect(() => {

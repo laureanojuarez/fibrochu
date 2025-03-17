@@ -15,13 +15,13 @@ export function ProductCard({ producto }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-1">
+    <section className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-1">
       <Link href={`/productos/${producto.id}`}>
         <div className="aspect-square relative">
           <img
             src={producto.imagen_url || "/placeholder-image.png"}
             alt={producto.nombre}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover" // Ajustamos la imagen
           />
           {producto.stock <= 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -31,15 +31,17 @@ export function ProductCard({ producto }) {
             </div>
           )}
         </div>
-        <div className="p-4 flex flex-col flex-grow">
-          <h3 className="text-xl font-bold mb-2 line-clamp-1">
+        <div className="p-2 flex flex-col flex-grow">
+          {" "}
+          {/* Reducimos el padding */}
+          <h3 className="text-lg font-bold mb-1 line-clamp-1">
             {producto.nombre}
           </h3>
-          <p className="text-gray-700 mb-2 flex-grow line-clamp-2">
+          <p className="text-gray-700 mb-1 flex-grow line-clamp-2">
             {producto.descripcion}
           </p>
           <div className="flex items-center justify-between text-center">
-            <p className="text-gray-700 text-lg font-bold">
+            <p className="text-gray-700 text-md font-bold">
               ${Number(producto.precio).toFixed(2)}
             </p>
             <button
@@ -52,6 +54,6 @@ export function ProductCard({ producto }) {
           </div>
         </div>
       </Link>
-    </div>
+    </section>
   );
 }
