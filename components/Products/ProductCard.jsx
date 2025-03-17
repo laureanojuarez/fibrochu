@@ -3,13 +3,12 @@
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { toast } from "react-hot-toast"; // Si instalas react-hot-toast para notificaciones
-
+import { toast } from "react-hot-toast";
 export function ProductCard({ producto }) {
   const { addToCart } = useCart();
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevenir navegación si se hace clic en el botón
+    e.preventDefault();
     addToCart(producto);
     toast.success(`${producto.nombre} añadido al carrito`);
   };
@@ -21,7 +20,7 @@ export function ProductCard({ producto }) {
           <img
             src={producto.imagen_url || "/placeholder-image.png"}
             alt={producto.nombre}
-            className="w-full h-full object-cover" // Ajustamos la imagen
+            className="w-full h-full object-cover"
           />
           {producto.stock <= 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -32,8 +31,6 @@ export function ProductCard({ producto }) {
           )}
         </div>
         <div className="p-2 flex flex-col flex-grow">
-          {" "}
-          {/* Reducimos el padding */}
           <h3 className="text-lg font-bold mb-1 line-clamp-1">
             {producto.nombre}
           </h3>

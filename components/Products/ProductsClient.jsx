@@ -61,7 +61,6 @@ export default function ProductsClient() {
         Catálogo de Productos
       </h1>
 
-      {/* Controles de filtrado y ordenamiento */}
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
         <div className="flex flex-wrap gap-3 justify-between items-center">
           <div className="text-gray-600">
@@ -86,7 +85,6 @@ export default function ProductsClient() {
         </div>
       </div>
 
-      {/* Lista de productos */}
       <ProductList productos={filteredProductos} />
     </div>
   );

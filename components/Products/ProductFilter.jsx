@@ -169,7 +169,7 @@ export function ProductFilter({ filters, setFilters, productos }) {
 
             {/* Botón para limpiar filtros */}
             <button
-              className="w-full bg-rose-400 text-white py-2 rounded-lg hover:bg-rose-500 transition-colors"
+              className="w-full bg-rose-400 text-white py-2 rounded-lg hover:bg-rose-400 transition-colors"
               onClick={() =>
                 setFilters({
                   category: "all",

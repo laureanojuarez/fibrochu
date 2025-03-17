@@ -2,18 +2,106 @@ import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("productos")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data || []);
+}
+
+export async function DELETE(request) {
+  const { id } = await request.json();
+  const supabase = await createClient();
+  const { error } = await supabase.from("productos").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
+
+// Add this function after your other API methods
+
+export async function PUT(request) {
   try {
+    // Primero guarda el resultado completo en una variable
+    const body = await request.json();
+
+    // Luego desestructura los valores que necesitas
+    const { id, nombre, descripcion, precio, stock } = body;
+
+    console.log("Datos recibidos en API:", body); // Ahora body está definido
+
+    // Convertir explícitamente a números
+    const precioNum = parseFloat(precio);
+    const stockNum = parseInt(stock);
+
+    // Validar
+    if (!id || !nombre || isNaN(precioNum) || isNaN(stockNum)) {
+      return NextResponse.json(
+        { error: "Faltan campos o son inválidos" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Antes de actualizar en Supabase", {
+      id: body.id, // Ahora body está definido
+      nombre: body.nombre, // Ahora body está definido
+      precio: precioNum,
+      stock: stockNum,
+    });
+
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("productos")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .update({
+        nombre,
+        descripcion,
+        precio: precioNum,
+        stock: stockNum,
+      })
+      .eq("id", id)
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      return NextResponse.json(
+        { error: `Error updating product: ${error.message}` },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json(data || []);
+    // Asegurarnos de que el objeto sea serializable
+    if (data && data[0]) {
+      // Convertimos el objeto a un objeto plano
+      const safeProduct = {
+        id: data[0].id,
+        nombre: data[0].nombre,
+        descripcion: data[0].descripcion,
+        precio: data[0].precio,
+        stock: data[0].stock,
+        imagen_url: data[0].imagen_url,
+        // Si hay más campos, agrégalos aquí...
+      };
+      return NextResponse.json(safeProduct);
+    } else {
+      return NextResponse.json({
+        success: true,
+        message: "Producto actualizado correctamente",
+      });
+    }
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error updating product:", error);
+    return NextResponse.json(
+      { error: `General error: ${error.message}` },
+      { status: 500 }
+    );
   }
 }
 

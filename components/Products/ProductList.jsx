@@ -30,9 +30,12 @@ export function ProductList({ productos }) {
 
   return (
     <div className="container mx-auto">
-      <div className="flex gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
         {productos?.map((producto) => (
-          <div key={producto.id} className="fade-in">
+          <div
+            key={producto.id}
+            className="fade-in w-full sm:w-1/2 md:w-1/3 lg:w-1/4"
+          >
             <ProductCard producto={producto} />
           </div>
         ))}
