@@ -100,24 +100,21 @@ export default function ProductsClient() {
           Catálogo de Productos
         </h1>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar con filtros */}
-          <aside className="lg:w-1/4 bg-white p-6 rounded-lg shadow-sm self-start">
-            <ProductFilter
-              filters={filters}
-              setFilters={setFilters}
-              productos={productos}
-            />
-          </aside>
+        {/* Controles de filtrado y ordenamiento */}
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+          <div className="flex flex-wrap gap-3 justify-between items-center">
+            <div className="text-gray-600">
+              {filteredProductos.length} producto
+              {filteredProductos.length !== 1 && "s"} encontrado
+              {filteredProductos.length !== 1 && "s"}
+            </div>
 
-          {/* Contenido principal */}
-          <div className="lg:w-3/4">
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
-              <p className="text-gray-600">
-                {filteredProductos.length} producto
-                {filteredProductos.length !== 1 && "s"} encontrado
-                {filteredProductos.length !== 1 && "s"}
-              </p>
+            <div className="flex gap-3 items-center">
+              <ProductFilter
+                filters={filters}
+                setFilters={setFilters}
+                productos={productos}
+              />
               <ProductSort
                 value={filters.sort}
                 onChange={(value) =>
@@ -125,10 +122,11 @@ export default function ProductsClient() {
                 }
               />
             </div>
-
-            <ProductList productos={filteredProductos} />
           </div>
         </div>
+
+        {/* Lista de productos */}
+        <ProductList productos={filteredProductos} />
       </div>
     </section>
   );
