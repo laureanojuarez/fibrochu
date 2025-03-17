@@ -1,17 +1,8 @@
 "use client";
 
-import Link from 'next/link';
-import { useEffect } from 'react';
-import { useCart } from '@/context/CartContext';
+import Link from "next/link";
 
 export default function PaymentSuccess() {
-  const { clearCart } = useCart();
-
-  useEffect(() => {
-    // Limpiar el carrito después de un pago exitoso
-    clearCart();
-  }, []);
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">

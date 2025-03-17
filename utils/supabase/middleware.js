@@ -1,10 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function updateSession(request) {
   try {
-    let supabaseResponse = NextResponse.next({
+    let response = NextResponse.next({
       request: {
         headers: request.headers,
       },
@@ -22,58 +21,75 @@ export async function updateSession(request) {
             cookiesToSet.forEach(({ name, value }) =>
               request.cookies.set(name, value)
             );
-            supabaseResponse = NextResponse.next({
+            response = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
+              response.cookies.set(name, value, options)
             );
           },
         },
       }
     );
 
-    // Do not run code between createServerClient and
-    // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-    // issues with users being randomly logged out.
-
-    // IMPORTANT: DO NOT REMOVE auth.getUser()
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (
-      !user &&
-      !request.nextUrl.pathname.includes("/login") &&
-      !request.nextUrl.pathname.includes("/register") &&
-      !request.nextUrl.pathname.includes("/forgot-password") &&
-      !request.nextUrl.pathname.includes("/reset-password") &&
-      !request.nextUrl.pathname.startsWith("/auth")
-    ) {
-      // no user, potentially respond by redirecting the user to the login page
+    const pathname = request.nextUrl.pathname;
+
+    // Verificar acceso al dashboard - solo para un usuario específico
+    if (pathname.startsWith("/dashboard")) {
+      if (!user) {
+        // No hay usuario, redirigir a login
+        const url = request.nextUrl.clone();
+        url.pathname = "/login";
+        return NextResponse.redirect(url);
+      }
+
+      // Aquí defines el ID específico que tiene permiso
+      const ADMIN_ID = process.env.ADMIN_USER_ID;
+
+      console.log("Usuario actual:", user.id);
+      console.log("ID Admin esperado:", ADMIN_ID);
+
+      if (user.id !== ADMIN_ID) {
+        // Usuario no autorizado para el dashboard
+        console.log("IDs no coinciden, acceso denegado");
+        const url = request.nextUrl.clone();
+        url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
+      }
+
+      console.log("Acceso autorizado al dashboard");
+      // Si llegamos aquí, el usuario está autorizado para el dashboard
+      return response;
+    }
+
+    // Para otras rutas protegidas (excepto las públicas)
+    const isPublicRoute =
+      pathname === "/" || // Ruta principal
+      pathname.includes("/login") ||
+      pathname.includes("/register") ||
+      pathname.includes("/forgot-password") ||
+      pathname.includes("/reset-password") ||
+      pathname.startsWith("/auth") ||
+      pathname.startsWith("/productos") || // Si quieres que el catálogo sea público
+      pathname.startsWith("/api/") || // Endpoints API (optional)
+      pathname.includes("/_next") || // Next.js assets
+      pathname.includes("/favicon"); // Favicon
+
+    if (!user && !isPublicRoute) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
 
-    // IMPORTANT: You *must* return the supabaseResponse object as it is.
-    // If you're creating a new response object with NextResponse.next() make sure to:
-    // 1. Pass the request in it, like so:
-    //    const myNewResponse = NextResponse.next({ request })
-    // 2. Copy over the cookies, like so:
-    //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-    // 3. Change the myNewResponse object to fit your needs, but avoid changing
-    //    the cookies!
-    // 4. Finally:
-    //    return myNewResponse
-    // If this is not done, you may be causing the browser and server to go out
-    // of sync and terminate the user's session prematurely!
-
     return response;
   } catch (e) {
+    console.error("Middleware error:", e);
     return NextResponse.next({
-      headers: {
+      request: {
         headers: request.headers,
       },
     });

@@ -10,10 +10,13 @@ import { ProductSearch } from "./Products";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LogoutFunction from "./Auth/LogoutFunction";
+import { createClient } from "@/utils/supabase/client";
 
 const Header = () => {
   const { toggleCart, cartItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -21,6 +24,21 @@ const Header = () => {
     const query = searchParams.get("q");
     if (query) setSearchQuery(query);
   }, [searchParams]);
+
+  // Verificar si hay un usuario autenticado
+  useEffect(() => {
+    const checkUser = async () => {
+      setLoading(true);
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+
+    checkUser();
+  }, []);
 
   const handleSearch = (value) => {
     setSearchQuery(value);
@@ -42,12 +60,22 @@ const Header = () => {
             <Image src={fibrochu} alt="fibrochu" width={130} priority />
           </Link>
           <div className="flex items-center gap-4 md:hidden">
-            <Link
-              href={"/login"}
-              className="text-white hover:text-gray-100 transition-colors"
-            >
-              <FaUser size={20} />
-            </Link>
+            {!loading &&
+              (user ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-white text-sm">
+                    Hola, {user.email?.split("@")[0]}
+                  </span>
+                  <LogoutFunction />
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-white hover:text-gray-100 transition-colors"
+                >
+                  <FaUser size={20} />
+                </Link>
+              ))}
             <button
               onClick={toggleCart}
               className="relative text-white hover:text-gray-100 transition-colors"
@@ -71,16 +99,33 @@ const Header = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href={"/login"}
-            className="text-white hover:text-gray-100 transition-colors flex items-center gap-2"
-          >
-            <FaUser size={20} />
-            <span>Iniciar sesión</span>
-          </Link>
-          <div className="flex items-center">
-            <LogoutFunction />
-          </div>
+          {!loading &&
+            (user ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-white">
+                    Hola, {user.email?.split("@")[0]}
+                  </span>
+                  {user.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID && (
+                    <Link
+                      href="/dashboard"
+                      className="bg-white text-rose-500 px-3 py-1 rounded-md text-sm hover:bg-gray-100 transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+                  <LogoutFunction />
+                </div>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="text-white hover:text-gray-100 transition-colors flex items-center gap-2"
+              >
+                <FaUser size={20} />
+                <span>Iniciar sesión</span>
+              </Link>
+            ))}
           <button
             onClick={toggleCart}
             className="relative text-white hover:text-gray-100 transition-colors"

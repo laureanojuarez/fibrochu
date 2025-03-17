@@ -1,48 +1,152 @@
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   try {
-    const cookieStore = cookies();
-    const supabase = await createClient({ cookies: cookieStore });
-
+    const supabase = await createClient();
     const body = await req.json();
 
-    console.log("Webhook payload completo:", JSON.stringify(body, null, 2));
+    console.log("Webhook recibido:", JSON.stringify(body, null, 2));
 
-    if (!body.data) {
-      throw new Error("No se recibieron datos en el webhook");
+    // Verificar que tipo de notificación es
+    const topic = body.topic || body.type;
+
+    if (topic !== "payment" && !body.data) {
+      console.log("No es una notificación de pago o faltan datos");
+      return NextResponse.json({
+        status: "ignored",
+        message: "Notificación no relevante",
+      });
     }
 
-    console.log("Data del webhook:", JSON.stringify(body.data, null, 2));
+    // Para notificaciones de pago, obtener el ID
+    let paymentId;
+    if (topic === "payment") {
+      paymentId = body.data.id;
+    } else {
+      paymentId = body.data?.id;
+    }
 
-    // Extraer información relevante del webhook
+    if (!paymentId) {
+      throw new Error("No se pudo identificar el ID de pago");
+    }
+
+    // Obtener los detalles completos del pago desde MercadoPago
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+    const paymentDetailsResponse = await fetch(
+      `https://api.mercadopago.com/v1/payments/${paymentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!paymentDetailsResponse.ok) {
+      throw new Error(
+        `Error obteniendo detalles de pago: ${paymentDetailsResponse.status}`
+      );
+    }
+
+    const payment = await paymentDetailsResponse.json();
+    console.log("Detalles del pago:", JSON.stringify(payment, null, 2));
+
+    // Extraer información del pago
     const {
       status,
+      status_detail,
       preference_id,
-      id: payment_id, // MercadoPago usa 'id' para el payment_id
       transaction_amount,
-      payer,
-    } = body.data;
-    // Guardar el estado del pago en la base de datos
-    const { error } = await supabase.from("orders").insert([
+      date_created,
+      date_approved,
+      payment_method_id,
+      payment_type_id,
+      metadata = {},
+    } = payment;
+
+    // Extraer información del comprador
+    const {
+      buyer_name = "",
+      buyer_surname = "",
+      buyer_address = "",
+      buyer_region = "",
+      items_with_instructions = "{}",
+    } = metadata;
+
+    // Parsear los items y sus instrucciones
+    let itemsData = [];
+    try {
+      itemsData = JSON.parse(items_with_instructions);
+    } catch (e) {
+      console.error("Error al parsear items_with_instructions:", e);
+    }
+
+    // Verificar si este pago ya está registrado
+    const { data: existingOrder } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("payment_id", paymentId)
+      .single();
+
+    if (existingOrder) {
+      // Actualizar el estado del pedido existente
+      const { error: updateError } = await supabase
+        .from("orders")
+        .update({
+          status,
+          status_detail,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("payment_id", paymentId);
+
+      if (updateError) {
+        console.error("Error al actualizar orden:", updateError);
+        throw updateError;
+      }
+
+      console.log(`Orden ${paymentId} actualizada con estado: ${status}`);
+      return NextResponse.json({ status: "updated" });
+    }
+
+    const { error: insertError } = await supabase.from("orders").insert([
       {
-        payment_id,
-        status,
+        payment_id: paymentId,
         preference_id,
+        status,
+        status_detail,
         created_at: new Date().toISOString(),
-        payer_email: payer?.email,
+        payment_date: date_approved || date_created,
         total_amount: transaction_amount,
-        raw_data: body, // Guarda el payload completo por si lo necesitas después
+        payment_method: payment_method_id,
+        payment_type: payment_type_id,
+
+        // Información del comprador
+        buyer_name: buyer_name,
+        buyer_surname: buyer_surname,
+        buyer_address: buyer_address,
+        buyer_region: buyer_region,
+
+        // Items e instrucciones
+        items_data: itemsData,
+
+        // Datos completos para referencia
+        raw_data: payment,
       },
     ]);
 
-    if (error) {
-      console.error("Error de Supabase:", error);
-      throw error;
+    if (insertError) {
+      console.error("Error al insertar orden:", insertError);
+      throw insertError;
     }
-    // Responder a MercadoPago
+
+    // Si el pago fue aprobado, puedes enviar una notificación, actualizar inventario, etc.
+    if (status === "approved") {
+      // TODO: Enviar email de confirmación, actualizar inventario, etc.
+      console.log(`Pago ${paymentId} aprobado y procesado correctamente`);
+    }
+
     return NextResponse.json({ status: "success" });
   } catch (error) {
     console.error("Error en el webhook:", error);

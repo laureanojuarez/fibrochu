@@ -3,7 +3,22 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { items } = await req.json();
+    const { items, buyer } = await req.json();
+
+    // Validar datos del comprador
+    if (
+      !buyer ||
+      !buyer.nombre ||
+      !buyer.apellido ||
+      !buyer.direccion ||
+      !buyer.region ||
+      !buyer.region.toLowerCase().includes("rosario")
+    ) {
+      return NextResponse.json(
+        { error: "Información del comprador incompleta o inválida" },
+        { status: 400 }
+      );
+    }
 
     const client = new MercadoPagoConfig({
       accessToken: process.env.MP_ACCESS_TOKEN,
@@ -14,16 +29,65 @@ export async function POST(req) {
     const response = await preference.create({
       body: {
         items: items.map((item) => ({
-          title: item.title,
+          id: item.id,
+          title: item.nombre,
           quantity: 1,
-          unit_price: Number(item.unit_price),
-          picture_url: item.imagen,
+          description: `Instrucciones: ${
+            item.descripcion || "Sin instrucciones"
+          }`,
+          unit_price: Number(item.precio),
+          picture_url: item.imagen_url,
+          category_id: "fibrochu_products",
         })),
         back_urls: {
           success: `${process.env.NEXT_PUBLIC_DOMAIN}/payment/success`,
           failure: `${process.env.NEXT_PUBLIC_DOMAIN}/payment/failure`,
         },
         auto_return: "approved",
+        statement_descriptor: "Fibrochu - Productos de Fibrofácil",
+
+        // Datos del comprador
+        payer: {
+          name: buyer.nombre,
+          surname: buyer.apellido,
+          address: {
+            street_name: buyer.direccion,
+            street_number: "", // Incluido en direccion
+            zip_code: "2000", // Código postal de Rosario
+          },
+        },
+
+        // Almacenar datos adicionales como metadatos
+        metadata: {
+          buyer_name: buyer.nombre,
+          buyer_surname: buyer.apellido,
+          buyer_address: buyer.direccion,
+          buyer_region: buyer.region,
+          items_with_instructions: JSON.stringify(
+            items.map((i) => ({
+              id: i.id,
+              nombre: i.nombre,
+              instrucciones: i.descripcion,
+            }))
+          ),
+        },
+        // Información de envío
+        shipments: {
+          cost: 0,
+          mode: "not_specified",
+          receiver_address: {
+            street_name: buyer.direccion,
+            city_name: "Rosario",
+            state_name: "Santa Fe",
+            country_name: "AR",
+            zip_code: "2000",
+          },
+        },
+        // Configuración de métodos de pago
+        payment_methods: {
+          excluded_payment_types: [],
+          installments: 6, // Máximo de cuotas
+        },
       },
     });
 

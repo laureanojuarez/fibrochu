@@ -31,20 +31,31 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const deleteFromCart = (product) => {
+  const removeFromCart = (product) => {
     setCartItems((prevItems) => {
       return prevItems.filter((item) => item.id !== product.id);
     });
   };
 
+  const updateCartItemCustomization = (id, customization) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, customization } : item
+      )
+    );
+  };
+
   return (
     <CartContext.Provider
       value={{
+        cartItems,
+        updateCartItemCustomization,
         cartVisible,
         toggleCart,
         cartItems,
         addToCart,
-        deleteFromCart,
+        removeFromCart,
+        toggleCart,
       }}
     >
       {children}
