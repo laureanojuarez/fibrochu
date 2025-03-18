@@ -41,7 +41,7 @@ export async function GET(request) {
         ? `${origin}${next}`
         : forwardedHost
         ? `https://${forwardedHost}${next}`
-        : `${origin}${next}`;
+        : `${process.env.NEXT_PUBLIC_DOMAIN}${next}`;
 
       return NextResponse.redirect(redirectUrl);
     }
