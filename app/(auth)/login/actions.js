@@ -108,20 +108,10 @@ export async function singOut() {
 export async function signInWithGithub() {
   const supabase = await createClient();
 
-  let redirectBase;
-
-  if (process.env.NODE_ENV === "production") {
-    redirectBase =
-      process.env.NEXT_PUBLIC_DOMAIN || "https://www.fibrochu.com.ar";
-
-    if (redirectBase.endsWith("/")) {
-      redirectBase = redirectBase.slice(0, -1);
-    }
-  } else {
-    redirectBase = (await headers()).get("origin");
-  }
-
-  console.log("Redirecting to:", `${redirectBase}/auth/callback`);
+  const redirectBase =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_DOMAIN || "https://www.fibrochu.com.ar"
+      : (await headers()).get("origin");
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",

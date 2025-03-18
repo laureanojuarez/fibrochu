@@ -35,13 +35,10 @@ export async function GET(request) {
         }
       }
 
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-      const redirectUrl = isLocalEnv
-        ? `${origin}${next}`
-        : forwardedHost
-        ? `https://${forwardedHost}${next}`
-        : `${process.env.NEXT_PUBLIC_DOMAIN}${next}`;
+      const redirectUrl =
+        process.env.NODE_ENV === "development"
+          ? `${origin}${next}`
+          : `${process.env.NEXT_PUBLIC_DOMAIN}${next}`;
 
       return NextResponse.redirect(redirectUrl);
     }
