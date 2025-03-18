@@ -28,9 +28,7 @@ const LoginForm = () => {
     <div>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-200">
-            Email
-          </label>
+          <label className="block text-sm font-medium">Email</label>
           <input
             type="email"
             placeholder="Email"
@@ -40,9 +38,7 @@ const LoginForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-200">
-            Password
-          </label>
+          <label className="block text-sm font-medium ">Password</label>
           <input
             type="password"
             placeholder="Contraseña"

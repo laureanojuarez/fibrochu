@@ -10,7 +10,6 @@ export async function POST(req) {
 
     console.log("Webhook recibido:", JSON.stringify(body, null, 2));
 
-    // Verificar que tipo de notificación es
     const topic = body.topic || body.type;
 
     if (topic !== "payment" && !body.data) {
@@ -21,7 +20,6 @@ export async function POST(req) {
       });
     }
 
-    // Para notificaciones de pago, obtener el ID
     let paymentId;
     if (topic === "payment") {
       paymentId = body.data.id;
@@ -33,7 +31,6 @@ export async function POST(req) {
       throw new Error("No se pudo identificar el ID de pago");
     }
 
-    // Obtener los detalles completos del pago desde MercadoPago
     const accessToken = process.env.MP_ACCESS_TOKEN;
     const paymentDetailsResponse = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -75,7 +72,6 @@ export async function POST(req) {
       items_with_instructions = "{}",
     } = metadata;
 
-    // Parsear los items y sus instrucciones
     let itemsData = [];
     try {
       itemsData = JSON.parse(items_with_instructions);
@@ -83,7 +79,6 @@ export async function POST(req) {
       console.error("Error al parsear items_with_instructions:", e);
     }
 
-    // Verificar si este pago ya está registrado
     const { data: existingOrder } = await supabase
       .from("orders")
       .select("*")
@@ -91,7 +86,6 @@ export async function POST(req) {
       .single();
 
     if (existingOrder) {
-      // Actualizar el estado del pedido existente
       const { error: updateError } = await supabase
         .from("orders")
         .update({
@@ -122,16 +116,13 @@ export async function POST(req) {
         payment_method: payment_method_id,
         payment_type: payment_type_id,
 
-        // Información del comprador
         buyer_name: buyer_name,
         buyer_surname: buyer_surname,
         buyer_address: buyer_address,
         buyer_region: buyer_region,
 
-        // Items e instrucciones
         items_data: itemsData,
 
-        // Datos completos para referencia
         raw_data: payment,
       },
     ]);
@@ -141,9 +132,7 @@ export async function POST(req) {
       throw insertError;
     }
 
-    // Si el pago fue aprobado, puedes enviar una notificación, actualizar inventario, etc.
     if (status === "approved") {
-      // TODO: Enviar email de confirmación, actualizar inventario, etc.
       console.log(`Pago ${paymentId} aprobado y procesado correctamente`);
     }
 

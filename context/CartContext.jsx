@@ -14,26 +14,22 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     setCartItems((prevItems) => {
-      // Verificar si el producto ya está en el carrito
       const existingItem = prevItems.find((item) => item.id === product.id);
 
       if (existingItem) {
-        // Si existe, solo actualizamos la cantidad
         return prevItems.map((item) =>
           item.id === product.id
             ? { ...item, quantity: (item.quantity || 1) + 1 }
             : item
         );
       } else {
-        // Si no existe, lo agregamos con cantidad 1
         return [...prevItems, { ...product, quantity: 1 }];
       }
     });
   };
   const removeFromCart = (id) => {
-    // Changed product to id
     setCartItems((prevItems) => {
-      return prevItems.filter((item) => item.id !== id); // Changed product.id to id
+      return prevItems.filter((item) => item.id !== id);
     });
   };
 

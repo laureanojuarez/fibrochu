@@ -50,7 +50,6 @@ const CartCheckout = ({ items, total }) => {
     try {
       setLoading(true);
 
-      // Preparar los ítems incluyendo las personalizaciones
       const checkoutItems = items.map((product) => ({
         id: product.id,
         nombre: product.nombre,
@@ -65,7 +64,6 @@ const CartCheckout = ({ items, total }) => {
         buyer: buyerInfo,
       });
 
-      // Redirige a MercadoPago
       const mercadoPagoUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${data.preferenceId}`;
       window.location.href = mercadoPagoUrl;
     } catch (error) {

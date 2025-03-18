@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import LogoutFunction from "./Auth/LogoutFunction";
 import { createClient } from "@/utils/supabase/client";
 
@@ -15,47 +14,44 @@ const Header = () => {
   const { toggleCart, cartItems } = useCart();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const query = searchParams.get("q");
-    if (query) setSearchQuery(query);
-  }, [searchParams]);
-
-  // Verificar si hay un usuario autenticado
   useEffect(() => {
     const supabase = createClient();
-
     const checkUser = async () => {
       setLoading(true);
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        setUser(user);
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
     };
 
     checkUser();
 
-    // Improve auth state change handling
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event);
-
-      // Actualizar AMBOS estados - esta es la línea que falta en tu código actual
-      setLoading(true);
       setUser(session?.user || null);
-      setLoading(false);
     });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
+
+  const renderAuthButton = () => {
+    if (loading) return null;
+    return user ? (
+      <LogoutFunction />
+    ) : (
+      <Link
+        href="/login"
+        className="text-white hover:text-gray-100 transition-colors"
+      >
+        <FaUser size={20} />
+      </Link>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-gradient-to-r from-rose-400 to-rose-300 shadow-md">
@@ -65,22 +61,7 @@ const Header = () => {
             <Image src={fibrochu} alt="fibrochu" width={130} priority />
           </Link>
           <div className="flex items-center gap-4 md:hidden">
-            {!loading &&
-              (user ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-white text-sm">
-                    Hola, {user.email?.split("@")[0]}
-                  </span>
-                  <LogoutFunction />
-                </div>
-              ) : (
-                <Link
-                  href="/login"
-                  className="text-white hover:text-gray-100 transition-colors"
-                >
-                  <FaUser size={20} />
-                </Link>
-              ))}
+            {renderAuthButton()}
             <button
               onClick={toggleCart}
               className="relative text-white hover:text-gray-100 transition-colors"
@@ -96,33 +77,7 @@ const Header = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
-          {!loading &&
-            (user ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="text-white">
-                    Hola, {user.email?.split("@")[0]}
-                  </span>
-                  {user.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID && (
-                    <Link
-                      href="/dashboard"
-                      className="bg-white text-rose-500 px-3 py-1 rounded-md text-sm hover:bg-gray-100 transition-colors"
-                    >
-                      Dashboard
-                    </Link>
-                  )}
-                  <LogoutFunction />
-                </div>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                className="text-white hover:text-gray-100 transition-colors flex items-center gap-2"
-              >
-                <FaUser size={20} />
-                <span>Iniciar sesión</span>
-              </Link>
-            ))}
+          {renderAuthButton()}
           <button
             onClick={toggleCart}
             className="relative text-white hover:text-gray-100 transition-colors"

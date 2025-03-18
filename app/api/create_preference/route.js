@@ -5,7 +5,6 @@ export async function POST(req) {
   try {
     const { items, buyer } = await req.json();
 
-    // Validar datos del comprador
     if (
       !buyer ||
       !buyer.nombre ||
@@ -46,18 +45,16 @@ export async function POST(req) {
         auto_return: "approved",
         statement_descriptor: "Fibrochu - Productos de Fibrofácil",
 
-        // Datos del comprador
         payer: {
           name: buyer.nombre,
           surname: buyer.apellido,
           address: {
             street_name: buyer.direccion,
-            street_number: "", // Incluido en direccion
-            zip_code: "2000", // Código postal de Rosario
+            street_number: "",
+            zip_code: "2000",
           },
         },
 
-        // Almacenar datos adicionales como metadatos
         metadata: {
           buyer_name: buyer.nombre,
           buyer_surname: buyer.apellido,
@@ -71,7 +68,6 @@ export async function POST(req) {
             }))
           ),
         },
-        // Información de envío
         shipments: {
           cost: 0,
           mode: "not_specified",
@@ -83,10 +79,9 @@ export async function POST(req) {
             zip_code: "2000",
           },
         },
-        // Configuración de métodos de pago
         payment_methods: {
           excluded_payment_types: [],
-          installments: 6, // Máximo de cuotas
+          installments: 6,
         },
       },
     });

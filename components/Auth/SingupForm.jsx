@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/app/(auth)/login/actions";
 import AuthButton from "./AuthButton";
-// import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");

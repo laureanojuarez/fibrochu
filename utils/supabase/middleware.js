@@ -47,11 +47,7 @@ export async function updateSession(request) {
         return NextResponse.redirect(url);
       }
 
-      // Aquí defines el ID específico que tiene permiso
       const ADMIN_ID = process.env.ADMIN_USER_ID;
-
-      console.log("Usuario actual:", user.id);
-      console.log("ID Admin esperado:", ADMIN_ID);
 
       if (user.id !== ADMIN_ID) {
         // Usuario no autorizado para el dashboard
@@ -62,11 +58,9 @@ export async function updateSession(request) {
       }
 
       console.log("Acceso autorizado al dashboard");
-      // Si llegamos aquí, el usuario está autorizado para el dashboard
       return response;
     }
 
-    // Para otras rutas protegidas (excepto las públicas)
     const isPublicRoute =
       pathname === "/" || // Ruta principal
       pathname.includes("/login") ||

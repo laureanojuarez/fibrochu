@@ -451,17 +451,14 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8 bg-white rounded-lg shadow-lg p-4">
         <h1 className="text-3xl font-bold text-gray-800">
           Panel de Administración
         </h1>
-        {/* Si se maneja la sesión desde el servidor se podría agregar aquí la info del usuario */}
         <span className="text-sm text-gray-600">Usuario</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Formulario para agregar productos */}
         <div className="lg:col-span-1 bg-white rounded-lg shadow-lg p-4">
           <h2 className="text-xl font-semibold mb-4">Agregar Nuevo Producto</h2>
           <div className="mb-4">
@@ -513,7 +510,6 @@ export default function DashboardPage() {
               Imagen del producto
             </label>
 
-            {/* Vista previa de la imagen */}
             {previewImage && (
               <div className="mb-2">
                 <img
@@ -535,7 +531,6 @@ export default function DashboardPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {/* Subida de archivos */}
               <div>
                 <label
                   htmlFor="imagen"
@@ -557,7 +552,6 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* URL alternativa */}
               <div>
                 <label
                   htmlFor="imagen_url"
@@ -600,7 +594,6 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Lista de productos */}
         {loading ? (
           <div>Cargando productos...</div>
         ) : (

@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
-    // Extraer el ID de la URL
     const url = new URL(request.url);
     const pathSegments = url.pathname.split("/");
     const id = pathSegments[pathSegments.length - 1];
