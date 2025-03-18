@@ -1,24 +1,21 @@
 "use client";
-import { singOut } from "@/app/(auth)/login/actions";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client"; // Usar cliente, no servidor
 
 const LogoutFunction = () => {
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLogout = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    await singOut();
-    setLoading(false);
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+
+    // Optionally force navigation to refresh auth state
+    router.refresh();
   };
 
   return (
     <div className="flex justify-center bg-gray-600 text-white text-sm px-4 py-2 rounded-md cursor-pointer w-24">
-      <form onSubmit={handleLogout}>
-        <button type="submit" disabled={loading}>
-          {loading ? "Signing out..." : "Sign out"}
-        </button>
-      </form>
+      <button onClick={handleLogout}>Cerrar sesión</button>
     </div>
   );
 };

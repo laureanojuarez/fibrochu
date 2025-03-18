@@ -1,5 +1,6 @@
 "use client";
 
+import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect } from "react";
 
 function ProductList({ productos, onDelete, updateProducto, onUpdate }) {
@@ -53,6 +54,7 @@ function ProductList({ productos, onDelete, updateProducto, onUpdate }) {
       alert("Error al actualizar el producto");
     }
   };
+
   return (
     <div className="lg:col-span-2 bg-white rounded-lg shadow-lg p-4">
       <h2 className="text-xl font-semibold mb-4">Productos Existentes</h2>
@@ -245,6 +247,8 @@ export default function DashboardPage() {
   const [precio, setPrecio] = useState("");
   const [imagen_url, setImagenUrl] = useState("");
   const [stock, setStock] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const [imagenFile, setImagenFile] = useState(null);
 
   useEffect(() => {
     async function loadProductos() {
@@ -289,8 +293,14 @@ export default function DashboardPage() {
   const handleAddProduct = async () => {
     try {
       // Validar que los campos no estén vacíos
-      if (!nombre || !descripcion || !precio || !imagen_url || !stock) {
+      if (!nombre || !descripcion || !precio || !stock) {
         alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+      // Verificar que haya imagen (archivo o URL)
+      if (!imagenFile && !imagen_url) {
+        alert("Por favor, suba una imagen o proporcione una URL de imagen.");
         return;
       }
 
@@ -301,6 +311,7 @@ export default function DashboardPage() {
         precio,
         imagen_url,
         stock,
+        imagenFile,
       });
 
       // Actualizar la lista de productos
@@ -312,6 +323,8 @@ export default function DashboardPage() {
       setPrecio("");
       setImagenUrl("");
       setStock("");
+      setImagenFile(null);
+      setPreviewImage(null);
     } catch (error) {
       console.error("Error adding product:", error);
       alert("Error al agregar el producto");
@@ -372,28 +385,68 @@ export default function DashboardPage() {
   };
 
   const addProducto = async (productData) => {
-    // Create FormData for file uploads
-    const formData = new FormData();
-    formData.append("nombre", productData.nombre);
-    formData.append("descripcion", productData.descripcion);
-    formData.append("precio", productData.precio);
-    formData.append("stock", productData.stock);
+    try {
+      let imagen_url = productData.imagen_url;
 
-    // If imagen_url is a URL string, not a file
-    if (productData.imagen_url) {
-      formData.append("imagen_url", productData.imagen_url);
+      if (productData.imagenFile) {
+        const supabase = createClient();
+        const fileExt = productData.imagenFile.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+
+        const { data, error } = await supabase.storage
+          .from("product-photos")
+          .upload(`imagenes/${fileName}`, productData.imagenFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (error) throw error;
+
+        const { data: urlData } = supabase.storage
+          .from("product-photos")
+          .getPublicUrl(`imagenes/${fileName}`);
+
+        imagen_url = urlData.publicUrl;
+      }
+
+      // Enviar los datos del producto con la URL de la imagen
+      const response = await fetch("/api/productos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: productData.nombre,
+          descripcion: productData.descripcion,
+          precio: productData.precio,
+          stock: productData.stock,
+          imagen_url,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add product");
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error al agregar producto:", error);
+      throw error;
     }
+  };
 
-    const response = await fetch("/api/productos", {
-      method: "POST",
-      body: formData,
-    });
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagenFile(file);
 
-    if (!response.ok) {
-      throw new Error("Failed to add product");
+      // Crear vista previa
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-
-    return response.json();
   };
 
   return (
@@ -456,19 +509,73 @@ export default function DashboardPage() {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="imagen_url"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              URL de la imagen
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Imagen del producto
             </label>
-            <input
-              type="text"
-              id="imagen_url"
-              value={imagen_url}
-              onChange={(e) => setImagenUrl(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+
+            {/* Vista previa de la imagen */}
+            {previewImage && (
+              <div className="mb-2">
+                <img
+                  src={previewImage}
+                  alt="Vista previa"
+                  className="w-full h-40 object-cover rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImagenFile(null);
+                    setPreviewImage(null);
+                  }}
+                  className="mt-1 text-xs text-red-500"
+                >
+                  Eliminar imagen
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {/* Subida de archivos */}
+              <div>
+                <label
+                  htmlFor="imagen"
+                  className="block text-gray-700 text-xs mb-1"
+                >
+                  Subir imagen
+                </label>
+                <input
+                  type="file"
+                  id="imagen"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
+                />
+              </div>
+
+              {/* URL alternativa */}
+              <div>
+                <label
+                  htmlFor="imagen_url"
+                  className="block text-gray-700 text-xs mb-1"
+                >
+                  O ingresa URL
+                </label>
+                <input
+                  type="text"
+                  id="imagen_url"
+                  value={imagen_url}
+                  onChange={(e) => setImagenUrl(e.target.value)}
+                  disabled={!!imagenFile}
+                  placeholder="https://"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 text-sm leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+            </div>
           </div>
           <div className="mb-4">
             <label

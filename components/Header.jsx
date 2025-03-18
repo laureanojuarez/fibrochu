@@ -7,16 +7,15 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import LogoutFunction from "./Auth/LogoutFunction";
 import { createClient } from "@/utils/supabase/client";
 
 const Header = () => {
   const { toggleCart, cartItems } = useCart();
-  const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -26,30 +25,37 @@ const Header = () => {
 
   // Verificar si hay un usuario autenticado
   useEffect(() => {
+    const supabase = createClient();
+
     const checkUser = async () => {
       setLoading(true);
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      setLoading(false);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setUser(user);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkUser();
-  }, []);
 
-  const handleSearch = (value) => {
-    setSearchQuery(value);
-    // Si estamos en la página de productos, actualizar la URL con el parámetro de búsqueda
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set("q", value);
-    } else {
-      params.delete("q");
-    }
-    router.push(`/?${params.toString()}`);
-  };
+    // Improve auth state change handling
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event);
+
+      // Actualizar AMBOS estados - esta es la línea que falta en tu código actual
+      setLoading(true);
+      setUser(session?.user || null);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 bg-gradient-to-r from-rose-400 to-rose-300 shadow-md">
