@@ -1,9 +1,9 @@
-import { ProductsClient } from "@/components/Products";
+import HomeCarousel from "@/components/Home/HomeCarousel";
 
 export default function Home() {
   return (
-    <main>
-      <ProductsClient />
+    <main className="container mx-auto">
+      <HomeCarousel />
     </main>
   );
 }

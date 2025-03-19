@@ -1,10 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
+import Header from "@/components/Header/Header";
 import { Footer } from "@/components/Footer";
 import CartTab from "@/components/Cart/CartTab";
 import { CartProvider } from "@/context/CartContext";
-import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,14 +21,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen justify-between`}
       >
-        <Suspense>
-          <CartProvider>
-            <Header />
-            <CartTab />
-            {children}
-            <Footer />
-          </CartProvider>
-        </Suspense>
+        <CartProvider>
+          <Header />
+          <CartTab />
+          {children}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

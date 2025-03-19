@@ -6,6 +6,7 @@ import { ProductFilter } from "./ProductFilter";
 import { ProductSort } from "./ProductSort";
 import { useSearchParams } from "next/navigation";
 import { useProductFilters } from "@/hooks/useProductFilters";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -35,8 +36,13 @@ export default function ProductsClient() {
   useEffect(() => {
     async function fetchProductos() {
       try {
-        const res = await fetch("/api/productos", { cache: "no-store" });
-        const data = await res.json();
+        const supabase = createClient();
+        const { data, error } = await supabase.from("productos").select("*");
+
+        if (error) {
+          throw error;
+        }
+
         setProductos(data);
       } catch (error) {
         console.error("Error fetching productos:", error);

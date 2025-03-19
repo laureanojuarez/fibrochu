@@ -68,10 +68,11 @@ export async function updateSession(request) {
       pathname.includes("/forgot-password") ||
       pathname.includes("/reset-password") ||
       pathname.startsWith("/auth") ||
-      pathname.startsWith("/productos") || // Si quieres que el catálogo sea público
-      pathname.startsWith("/api/") || // Endpoints API (optional)
-      pathname.includes("/_next") || // Next.js assets
-      pathname.includes("/favicon"); // Favicon
+      pathname.startsWith("/productos") ||
+      pathname.startsWith("/api/") ||
+      pathname.includes("/_next") ||
+      pathname.includes("/favicon") ||
+      pathname.includes("/metodos-de-pago");
 
     if (!user && !isPublicRoute) {
       const url = request.nextUrl.clone();
