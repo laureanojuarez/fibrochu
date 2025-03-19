@@ -8,8 +8,6 @@ export async function POST(req) {
     const supabase = await createClient();
     const body = await req.json();
 
-    console.log("Webhook recibido:", JSON.stringify(body, null, 2));
-
     const topic = body.topic || body.type;
 
     if (topic !== "payment" && !body.data) {
@@ -60,6 +58,7 @@ export async function POST(req) {
       date_approved,
       payment_method_id,
       payment_type_id,
+      external_reference,
       metadata = {},
     } = payment;
 
@@ -69,6 +68,7 @@ export async function POST(req) {
       buyer_surname = "",
       buyer_address = "",
       buyer_region = "",
+      orderId = external_reference,
       items_with_instructions = "{}",
     } = metadata;
 
@@ -79,11 +79,32 @@ export async function POST(req) {
       console.error("Error al parsear items_with_instructions:", e);
     }
 
-    const { data: existingOrder } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("payment_id", paymentId)
-      .single();
+    // Primero intentamos buscar la orden por external_reference
+    let orderQuery;
+    if (external_reference) {
+      console.log(
+        `Buscando orden con external_reference: ${external_reference}`
+      );
+      orderQuery = await supabase
+        .from("orders")
+        .select("*")
+        .eq("external_reference", external_reference)
+        .single();
+    }
+
+    // Si no encontramos por external_reference, buscamos por payment_id
+    if (!orderQuery?.data) {
+      console.log(
+        `No se encontró orden con external_reference, buscando por payment_id: ${paymentId}`
+      );
+      orderQuery = await supabase
+        .from("orders")
+        .select("*")
+        .eq("payment_id", paymentId)
+        .single();
+    }
+
+    const existingOrder = orderQuery?.data;
 
     if (existingOrder) {
       const { error: updateError } = await supabase
@@ -92,8 +113,9 @@ export async function POST(req) {
           status,
           status_detail,
           updated_at: new Date().toISOString(),
+          payment_id: paymentId,
         })
-        .eq("payment_id", paymentId);
+        .eq("id", existingOrder.id);
 
       if (updateError) {
         console.error("Error al actualizar orden:", updateError);
@@ -106,6 +128,8 @@ export async function POST(req) {
 
     const { error: insertError } = await supabase.from("orders").insert([
       {
+        id: external_reference ? external_reference : `order_${Date.now()}`,
+        external_reference,
         payment_id: paymentId,
         preference_id,
         status,

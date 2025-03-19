@@ -19,6 +19,10 @@ export async function POST(req) {
       );
     }
 
+    const orderId = `fibrochu_${Date.now()}_${Math.random()
+      .toString(36)
+      .substring(2, 8)}`;
+
     const client = new MercadoPagoConfig({
       accessToken: process.env.MP_ACCESS_TOKEN,
     });
@@ -27,6 +31,9 @@ export async function POST(req) {
 
     const response = await preference.create({
       body: {
+        notification_url: `${process.env.NEXT_PUBLIC_DOMAIN}/api/webhook`,
+        external_reference: orderId,
+
         items: items.map((item) => ({
           id: item.id,
           title: item.nombre,
@@ -60,6 +67,7 @@ export async function POST(req) {
           buyer_surname: buyer.apellido,
           buyer_address: buyer.direccion,
           buyer_region: buyer.region,
+          orderId: orderId,
           items_with_instructions: JSON.stringify(
             items.map((i) => ({
               id: i.id,
