@@ -79,8 +79,8 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-gradient-to-r from-rose-400 to-rose-300 shadow-md">
-      <div className="container mx-auto px-4  flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <header className="sticky bg-gradient-to-r from-rose-400 to-rose-300 shadow-md w-full">
+      <div className="px-4 py-2 md:px-8 md:py-3 md:justify-between md:flex">
         <div className="flex items-center justify-between">
           <Link
             href="/"
@@ -90,9 +90,9 @@ const Header = () => {
             <Image
               src={fibrochu}
               alt="Fibrochu"
-              width={125}
+              width={100}
               priority
-              className="hover:opacity-90 transition-opacity filter p-1"
+              className="hover:opacity-90 transition-opacity p-4"
             />
           </Link>
 
