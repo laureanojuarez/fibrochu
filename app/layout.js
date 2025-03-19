@@ -4,6 +4,7 @@ import Header from "@/components/Header/Header";
 import { Footer } from "@/components/Footer";
 import CartTab from "@/components/Cart/CartTab";
 import { CartProvider } from "@/context/CartContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,16 +19,18 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen justify-between`}
-      >
-        <CartProvider>
-          <Header />
-          <CartTab />
-          {children}
-          <Footer />
-        </CartProvider>
-      </body>
+      <Suspense>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen justify-between`}
+        >
+          <CartProvider>
+            <Header />
+            <CartTab />
+            {children}
+            <Footer />
+          </CartProvider>
+        </body>
+      </Suspense>
     </html>
   );
 }
