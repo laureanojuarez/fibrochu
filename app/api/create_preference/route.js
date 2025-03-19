@@ -96,6 +96,8 @@ export async function POST(req) {
 
     return NextResponse.json({
       preferenceId: response.id,
+      orderId,
+      orderId,
     });
   } catch (error) {
     console.error("Error:", error);
