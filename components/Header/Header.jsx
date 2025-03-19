@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import fibrochu from "@/app/fibrochu.png";
+import fibrochu from "@/app/fibrochu-logo.png";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
@@ -18,7 +18,6 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Calcular la cantidad total de items en el carrito
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
@@ -81,7 +80,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-30 bg-gradient-to-r from-rose-400 to-rose-300 shadow-md">
-      <div className="container mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="container mx-auto px-4  flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center justify-between">
           <Link
             href="/"
@@ -91,10 +90,9 @@ const Header = () => {
             <Image
               src={fibrochu}
               alt="Fibrochu"
-              width={130}
-              height={40}
+              width={125}
               priority
-              className="hover:opacity-90 transition-opacity"
+              className="hover:opacity-90 transition-opacity filter p-1"
             />
           </Link>
 
@@ -114,7 +112,6 @@ const Header = () => {
                 </span>
               )}
             </button>
-            {/* Hamburger menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white focus:outline-none p-1.5 rounded-full hover:bg-white/10 transition-colors"

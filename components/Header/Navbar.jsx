@@ -20,7 +20,7 @@ export const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   return (
     <>
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0  shadow-lg z-20 py-2 animate-slideDown px-2">
+        <div className="md:hidden absolute top-full left-0 right-0  shadow-lg z-20 py-2 animate-slideDown px-2 bg-white">
           <ul className="flex flex-col">
             {navLinks.map((link) => (
               <li key={link.href}>
