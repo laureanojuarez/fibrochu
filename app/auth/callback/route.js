@@ -35,11 +35,7 @@ export async function GET(request) {
         }
       }
 
-      const redirectUrl =
-        process.env.NODE_ENV === "development"
-          ? `${origin}${next}`
-          : `${process.env.NEXT_PUBLIC_DOMAIN}${next}`;
-
+      const redirectUrl = `${process.env.NEXT_PUBLIC_DOMAIN}${next}`;
       return NextResponse.redirect(redirectUrl);
     }
   }

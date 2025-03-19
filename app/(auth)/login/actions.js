@@ -109,9 +109,7 @@ export async function signInWithGithub() {
   const supabase = await createClient();
 
   const redirectBase =
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXT_PUBLIC_DOMAIN || "https://www.fibrochu.com.ar"
-      : (await headers()).get("origin");
+    process.env.NEXT_PUBLIC_DOMAIN || "https://www.fibrochu.com.ar";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
