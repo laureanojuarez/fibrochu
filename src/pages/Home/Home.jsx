@@ -10,7 +10,7 @@ function Home() {
       <SlideProducts />
 
       <div className="flex flex-wrap justify-center gap-4 w-full bg-gradient-to-r from-rose-100 to-rose-200 p-2 mb-3 text-center">
-        <p>♥️ ENVIOS A TODO EL PAIS!!</p>
+        <p>♥️ ENVIOS SOLO EN ROSARIO!!</p>
         <p>CUOTAS</p>
         <p>TRANSFERENCIA</p>
         <p>ESCRIBINOS AL WHATSAPP</p>

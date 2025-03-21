@@ -9,11 +9,14 @@ export const useFetchProductos = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const { data, error } = await supabase.from("productos").select("*");
+        const { data, error } = await supabase
+          .from("productos")
+          .select("*")
+          .order("created_at", { ascending: false });
         if (error) {
           throw error;
         }
-        setProductos(data);
+        setProductos(data || []);
       } catch (error) {
         setError(error);
       } finally {

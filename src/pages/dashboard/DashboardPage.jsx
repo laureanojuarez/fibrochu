@@ -14,6 +14,10 @@ export default function DashboardPage() {
   const [productosList, setProductosList] = useState(productos);
   const [editingProduct, setEditingProduct] = useState(null);
 
+  if (!session || session.user.id !== USER_PERMITIDO) {
+    return <Navigate to="/" />;
+  }
+
   useEffect(() => {
     setProductosList(productos);
   }, [productos]);
@@ -34,10 +38,6 @@ export default function DashboardPage() {
   const handleEditClick = (producto) => {
     setEditingProduct(producto);
   };
-
-  if (!session || session.user.id !== USER_PERMITIDO) {
-    return <Navigate to="/" />;
-  }
 
   if (loading) {
     return <div>Loading...</div>;

@@ -2,18 +2,21 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import SignUpPage from "../pages/auth/SignUpPage";
 import SignInPage from "../pages/auth/SignInPage";
-import NotFoundPage from "../pages/404Page";
 import AuthProtectedRoute from "./AuthProtectedRoute";
-import App from "../App";
 import DashboardPage from "../pages/dashboard/DashboardPage";
+import NotFoundPage from "../pages/404Page";
+import App from "../App";
+import ProductsPage from "../pages/productos/ProductsPage";
+import MetodospagoPage from "../pages/metodos-de-pago/MetodospagoPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <NotFoundPage />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <Home />,
       },
       {
@@ -25,20 +28,23 @@ const router = createBrowserRouter([
         element: <SignUpPage />,
       },
       {
-        path: "/",
+        path: "productos",
+        element: <ProductsPage />,
+      },
+      {
+        path: "metodos-de-pago",
+        element: <MetodospagoPage />,
+      },
+      {
         element: <AuthProtectedRoute />,
         children: [
           {
-            path: "/dashboard",
+            path: "dashboard",
             element: <DashboardPage />,
           },
         ],
       },
     ],
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />,
   },
 ]);
 
