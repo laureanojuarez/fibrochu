@@ -4,9 +4,8 @@ import SignUpPage from "../pages/auth/SignUpPage";
 import SignInPage from "../pages/auth/SignInPage";
 import NotFoundPage from "../pages/404Page";
 import AuthProtectedRoute from "./AuthProtectedRoute";
-import ProtectedPage from "../pages/ProtectedPage";
 import App from "../App";
-import { DashboardPage } from "../pages/dashboard/DashboardPage";
+import DashboardPage from "../pages/dashboard/DashboardPage";
 
 const router = createBrowserRouter([
   {

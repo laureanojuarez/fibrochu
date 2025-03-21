@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 const USER_PERMITIDO = "8f1f6259-5b28-425e-bab2-49b96bf5b9b5";
 
-export const DashboardPage = () => {
+export default function DashboardPage() {
   const { session } = useSession();
   const { productos, loading, error } = useFetchProductos();
   const [productosList, setProductosList] = useState(productos);
@@ -94,4 +94,4 @@ export const DashboardPage = () => {
       )}
     </div>
   );
-};
+}
