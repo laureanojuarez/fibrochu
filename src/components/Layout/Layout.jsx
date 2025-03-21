@@ -10,7 +10,7 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="w-full min-h-screen grid grid-rows-[auto_1fr_auto]">
+    <div className="flex flex-col justify-between min-h-screen">
       <Header toggleCart={toggleCart} />
       {children}
       <Footer />

@@ -9,7 +9,7 @@ export default function SlideProducts() {
     type: "loop",
     perPage: 3,
     padding: "1rem",
-    gap: "0.5rem",
+    gap: "1rem",
     classes: {
       arrows: "splide__arrows",
       arrow: "splide__arrow",
