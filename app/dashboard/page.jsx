@@ -3,10 +3,10 @@
 import { useSession } from "../../context/SessionContext";
 import { useState } from "react";
 import { FormDashboard } from "../../components/Dashboard/FormDashboard";
-import { useFetchProductos } from "../../components/Products/getProductos";
 import { FormEditProduct } from "../../components/Dashboard/FormEditProduct";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useFetchProductos } from "@/components/Products/getProductos";
 
 const USER_PERMITIDO = "8f1f6259-5b28-425e-bab2-49b96bf5b9b5";
 
@@ -16,6 +16,13 @@ export default function DashboardPage() {
   const { productos, loading, error } = useFetchProductos();
   const [productosList, setProductosList] = useState(productos);
   const [editingProduct, setEditingProduct] = useState(null);
+
+  // Sincronizar el estado local con los datos fetched
+  useEffect(() => {
+    if (productos) {
+      setProductosList(productos);
+    }
+  }, [productos]);
 
   // Verificar autenticación y redireccionar si es necesario
   useEffect(() => {
