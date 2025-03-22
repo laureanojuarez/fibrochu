@@ -1,26 +1,37 @@
-import { Navigate } from "react-router-dom";
+"use client";
+
 import { useSession } from "../../context/SessionContext";
 import { useState } from "react";
 import { FormDashboard } from "../../components/Dashboard/FormDashboard";
 import { useFetchProductos } from "../../components/Products/getProductos";
 import { FormEditProduct } from "../../components/Dashboard/FormEditProduct";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const USER_PERMITIDO = "8f1f6259-5b28-425e-bab2-49b96bf5b9b5";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { session } = useSession();
   const { productos, loading, error } = useFetchProductos();
   const [productosList, setProductosList] = useState(productos);
   const [editingProduct, setEditingProduct] = useState(null);
 
-  if (!session || session.user.id !== USER_PERMITIDO) {
-    return <Navigate to="/" />;
+  // Verificar autenticación y redireccionar si es necesario
+  useEffect(() => {
+    if (session === null || (session && session.user.id !== USER_PERMITIDO)) {
+      router.push("/");
+    }
+  }, [session, router]);
+
+  // Evitar renderizado si no hay sesión o no es usuario permitido
+  if (session === undefined) {
+    return <div className="container mx-auto p-4">Cargando...</div>;
   }
 
-  useEffect(() => {
-    setProductosList(productos);
-  }, [productos]);
+  if (session === null || session.user.id !== USER_PERMITIDO) {
+    return null; // No renderizar nada mientras se redirecciona
+  }
 
   const handleProductAdded = (newProduct) => {
     setProductosList((prevProductos) => [...prevProductos, newProduct]);
@@ -87,10 +98,15 @@ export default function DashboardPage() {
       </div>
 
       {editingProduct && (
-        <FormEditProduct
-          product={editingProduct}
-          onProductUpdated={handleProductUpdated}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <FormEditProduct
+              product={editingProduct}
+              onProductUpdated={handleProductUpdated}
+              onCancel={() => setEditingProduct(null)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
