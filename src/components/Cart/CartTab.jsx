@@ -14,11 +14,11 @@ const CartTab = ({ isOpen, toggleCart }) => {
         {cart.length === 0 ? (
           <p className="text-center">No hay productos en el carrito</p>
         ) : (
-          <div>
-            <ul className="flex flex-col gap-4">
-              {cart.map((item) => (
-                <li key={item.id}>
-                  <img src={item.id} alt="HOLA" width={50} />
+          <div className="flex flex-col gap-4">
+            {cart.map((item) => (
+              <div key={item.id} className="flex">
+                <img src={item.imagen_url} alt="HOLA" width={50} />
+                <div className="flex items-center">
                   {item.nombre} - ${item.precio} x {item.cantidad}
                   <button
                     className="ml-4 text-red-500"
@@ -26,11 +26,17 @@ const CartTab = ({ isOpen, toggleCart }) => {
                   >
                     Eliminar
                   </button>
-                </li>
-              ))}
-            </ul>
+                </div>
+              </div>
+            ))}
             <button
               className="w-full py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              onClick={clearCart}
+            >
+              Comprar
+            </button>
+            <button
+              className="w-full py-2 bg-blue-400 text-white rounded-md hover:bg-blue-500"
               onClick={clearCart}
             >
               Borrar todo

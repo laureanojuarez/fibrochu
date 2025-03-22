@@ -23,7 +23,7 @@ const Header = () => {
         <Link to="/">
           <img src={fibrochu_logo} alt="Logo de Fibrochu" className="w-32" />
         </Link>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 ">
           <Link to="/login" className="hidden md:block text-white">
             <RiUser3Line size={20} />
           </Link>
@@ -43,38 +43,38 @@ const Header = () => {
       </header>
 
       {/* Desktop Navbar */}
-      <div className="hidden md:block">
+      <div className="hidden md:block w-full">
         <Navbar />
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg p-4 absolute top-full right-0 w-full z-50">
-          <nav className="flex flex-col space-y-4">
+          <nav className="flex flex-col space-y-4 items-center">
             <Link
               to="/"
-              className="text-gray-800 hover:text-rose-500"
+              className="text-gray-800 hover:text-rose-500 items-center"
               onClick={toggleMenu}
             >
               Inicio
             </Link>
             <Link
               to="/productos"
-              className="text-gray-800 hover:text-rose-500"
+              className="text-gray-800 hover:text-rose-500 items-center"
               onClick={toggleMenu}
             >
               Productos
             </Link>
             <Link
               to="/metodos-de-pago"
-              className="text-gray-800 hover:text-rose-500"
+              className="text-gray-800 hover:text-rose-500 items-center flex gap-2 justify-center"
               onClick={toggleMenu}
             >
               Métodos de pago
             </Link>
             <Link
               to="/login"
-              className="text-gray-800 hover:text-rose-500 flex items-center gap-2"
+              className="text-gray-800 hover:text-rose-500 flex items-center gap-2 justify-center"
               onClick={toggleMenu}
             >
               <RiUser3Line size={20} /> Login

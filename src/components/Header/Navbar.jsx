@@ -2,16 +2,22 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <div className="flex justify-center items-center space-x-4 md:space-x-8 h-10 border-b border-gray-200">
-      <Link to="/" className="text-gray-800 hover:text-rose-500">
+    <nav className="flex justify-center bg-white py-2">
+      <Link to="/" className="text-gray-800 hover:text-rose-500 mx-4">
         Inicio
       </Link>
-      <Link to="/productos" className="text-gray-800 hover:text-rose-500">
+      <Link
+        to="/productos"
+        className="text-gray-800 hover:text-rose-500 text-center mx-4"
+      >
         Productos
       </Link>
-      <Link to="/metodos-de-pago" className="text-gray-800 hover:text-rose-500">
+      <Link
+        to="/metodos-de-pago"
+        className="text-gray-800 hover:text-rose-500 text-center mx-4"
+      >
         Métodos de pago
       </Link>
-    </div>
+    </nav>
   );
 }
