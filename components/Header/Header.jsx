@@ -22,14 +22,21 @@ const Header = () => {
 
   return (
     <div className="relative">
-      <header className="flex w-full sticky top-0 px-4 py-2 justify-between bg-gradient-to-r from-rose-500 to-rose-400 z-50">
+      <header
+        className="flex w-full sticky top-0 px-4 py-2 justify-between z-50"
+        style={{
+          background:
+            "linear-gradient(to right, #0d0d0d, rgba(255, 102, 178, 0.15), #0d0d0d)",
+          borderBottom: "1px solid var(--primary)",
+        }}
+      >
         <Link href="/">
           <Image src={fibrochu_logo} alt="Logo de Fibrochu" className="w-32" />
         </Link>
-        <div className="flex items-center space-x-4 ">
+        <div className="flex items-center space-x-4">
           <Link
             href="/auth/sign-in-page"
-            className="hidden md:block text-white"
+            className="hidden md:block text-foreground hover:text-primary transition-colors"
           >
             <RiUser3Line size={20} />
           </Link>
@@ -37,13 +44,13 @@ const Header = () => {
             size={20}
             cursor={"pointer"}
             onClick={toggleCart}
-            className="text-white"
+            className="text-foreground hover:text-primary transition-colors"
           />
           <RiMenuLine
             size={20}
             cursor={"pointer"}
             onClick={toggleMenu}
-            className="md:hidden text-white"
+            className="md:hidden text-foreground hover:text-primary transition-colors"
           />
         </div>
       </header>
@@ -55,32 +62,39 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg p-4 absolute top-full right-0 w-full z-50">
-          <nav className="flex flex-col space-y-4 items-center">
+        <div
+          className="md:hidden shadow-lg p-4 absolute top-full right-0 w-full z-50   "
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(255, 102, 178, 0.1), rgba(26, 26, 26, 0.95))",
+            backgroundColor: "var(--background)",
+          }}
+        >
+          <nav className="flex flex-col space-y-4 items-center ">
             <Link
               href="/"
-              className="text-gray-800 hover:text-rose-500 items-center"
+              className="text-foreground hover:text-primary items-center transition-colors"
               onClick={toggleMenu}
             >
               Inicio
             </Link>
             <Link
               href="/productos"
-              className="text-gray-800 hover:text-rose-500 items-center"
+              className="text-foreground hover:text-primary items-center transition-colors"
               onClick={toggleMenu}
             >
               Productos
             </Link>
             <Link
               href="/metodos-de-pago"
-              className="text-gray-800 hover:text-rose-500 items-center flex gap-2 justify-center"
+              className="text-foreground hover:text-primary items-center flex gap-2 justify-center transition-colors"
               onClick={toggleMenu}
             >
               Métodos de pago
             </Link>
             <Link
               href="/auth/sign-in-page"
-              className="text-gray-800 hover:text-rose-500 flex items-center gap-2 justify-center"
+              className="text-foreground hover:text-primary flex items-center gap-2 justify-center transition-colors"
               onClick={toggleMenu}
             >
               <RiUser3Line size={20} /> Login

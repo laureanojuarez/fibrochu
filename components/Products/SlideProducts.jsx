@@ -1,5 +1,5 @@
 import { getProductos } from "@/components/Products/getProductos";
-import ProductSlider from "./ProductSlider"; // Crearemos este componente a continuación
+import ProductSlider from "./ProductSlider";
 
 export default async function SlideProducts() {
   try {
@@ -10,7 +10,7 @@ export default async function SlideProducts() {
     return <ProductSlider productos={productos} />;
   } catch (error) {
     return (
-      <div className="text-red-500">
+      <div className="text-primary border border-primary bg-gray-dark p-4 rounded-md m-4">
         Error al cargar los productos: {error.message}
       </div>
     );

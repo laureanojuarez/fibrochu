@@ -23,13 +23,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col  `}
       >
         <SessionProvider>
           <Header />
-          {children}
+          <main className="flex-grow">{children}</main>
           <Footer />
         </SessionProvider>
       </body>

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import useCartStore from "../../store/cartStore";
 import toast from "react-hot-toast";
+import { RiLoader4Line } from "@remixicon/react";
 
 export function CheckoutButton() {
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,6 @@ export function CheckoutButton() {
     setError(null);
 
     try {
-      // Usar el endpoint correcto según nuestra nueva API Route
       const response = await fetch("/api/mercadopago", {
         method: "POST",
         headers: {
@@ -59,10 +58,7 @@ export function CheckoutButton() {
         throw new Error(data.error || "Error al procesar el pago");
       }
 
-      // Redirigir al usuario a la URL de pago de MercadoPago
       window.location.href = data.init_point;
-
-      // Opcional: guardar el orderId en localStorage para referencia
       localStorage.setItem("lastOrderId", data.orderId);
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
@@ -75,7 +71,7 @@ export function CheckoutButton() {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-right font-bold">
+      <div className="text-right font-bold text-foreground">
         Total: $
         {cart
           .reduce(
@@ -89,28 +85,34 @@ export function CheckoutButton() {
         <button
           onClick={handleCheckout}
           disabled={cart.length === 0}
-          className={`w-full py-2 text-white rounded-lg transition-all ${
+          className={`w-full py-2 text-white rounded transition-all ${
             cart.length === 0
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-rose-500 hover:bg-rose-600"
+              ? "bg-gray-800 cursor-not-allowed"
+              : "bg-primary hover:bg-accent"
           }`}
         >
           Pagar ahora
         </button>
       ) : (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div
+            className="p-6 rounded-lg w-full max-w-md border border-primary"
+            style={{
+              background:
+                "linear-gradient(to bottom, #1a1a1a, rgba(13, 13, 13, 0.95))",
+            }}
+          >
+            <h2 className="text-xl font-bold mb-4 text-foreground">
               Información del comprador
             </h2>
             {error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+              <div className="mb-4 p-3 bg-background text-primary rounded border border-primary text-sm">
                 {error}
               </div>
             )}
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Nombre
                 </label>
                 <input
@@ -118,12 +120,12 @@ export function CheckoutButton() {
                   name="nombre"
                   value={buyerInfo.nombre}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
                   required
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Apellido
                 </label>
                 <input
@@ -131,12 +133,12 @@ export function CheckoutButton() {
                   name="apellido"
                   value={buyerInfo.apellido}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
                   required
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Dirección
                 </label>
                 <input
@@ -144,43 +146,26 @@ export function CheckoutButton() {
                   name="direccion"
                   value={buyerInfo.direccion}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
                   required
                 />
               </div>
-              <div className="flex justify-end space-x-2">
+              <div className="flex justify-end space-x-2 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md"
+                  className="px-4 py-2 bg-background text-gray-light border border-gray-800 rounded hover:text-primary hover:border-primary transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 bg-rose-500 text-white rounded-md hover:bg-rose-600 disabled:bg-rose-300"
+                  className="px-4 py-2 bg-primary text-white rounded hover:bg-accent disabled:bg-opacity-50 transition-colors"
                 >
                   {loading ? (
-                    <span className="flex items-center">
-                      <svg
-                        className="animate-spin h-5 w-5 mr-2"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
+                    <span className="flex items-center justify-center">
+                      <RiLoader4Line className="animate-spin h-5 w-5 mr-2" />
                       Procesando...
                     </span>
                   ) : (

@@ -1,19 +1,18 @@
 "use client";
 
 import { useSession } from "../../context/SessionContext";
-import { useState } from "react";
 import { FormDashboard } from "../../components/Dashboard/FormDashboard";
 import { FormEditProduct } from "../../components/Dashboard/FormEditProduct";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchProductos } from "@/components/Products/getProductos";
+import { useFetchProductos } from "@/components/Products/useFetchProductos";
+import { useEffect, useState } from "react";
 
-const USER_PERMITIDO = "8f1f6259-5b28-425e-bab2-49b96bf5b9b5";
+const USER_PERMITIDO = process.env.NEXT_PUBLIC_USER_ADMIN;
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { session } = useSession();
   const { productos, loading, error } = useFetchProductos();
+  const { session } = useSession();
   const [productosList, setProductosList] = useState(productos);
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -40,6 +39,20 @@ export default function DashboardPage() {
     return null; // No renderizar nada mientras se redirecciona
   }
 
+  // Mostrar estado de carga
+  if (loading) {
+    return <div className="container mx-auto p-4">Cargando productos...</div>;
+  }
+
+  // Mostrar errores
+  if (error) {
+    return (
+      <div className="container mx-auto p-4 text-red-500">
+        Error al cargar productos: {error.message}
+      </div>
+    );
+  }
+
   const handleProductAdded = (newProduct) => {
     setProductosList((prevProductos) => [...prevProductos, newProduct]);
   };
@@ -56,14 +69,6 @@ export default function DashboardPage() {
   const handleEditClick = (producto) => {
     setEditingProduct(producto);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
 
   return (
     <div className="container mx-auto p-4">

@@ -1,5 +1,5 @@
+import { supabase } from "@/supabase/client";
 import { useState } from "react";
-import { supabase } from "../../supabase/client";
 
 export const FormEditProduct = ({ product, onProductUpdated }) => {
   const [nombre, setNombre] = useState(product.nombre);
@@ -63,7 +63,7 @@ export const FormEditProduct = ({ product, onProductUpdated }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 p-4 border border-black rounded-lg shadow-md w-full max-w-md"
+      className="flex flex-col gap-4 p-4 border border-black rounded-lg shadow-md w-full max-w-md text-black"
     >
       <input
         type="text"
