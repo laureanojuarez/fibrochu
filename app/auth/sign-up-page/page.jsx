@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabase/client";
@@ -40,24 +40,18 @@ const SignUpPage = () => {
   };
 
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen bg-white gap-2">
+    <main className="flex flex-col justify-center items-center min-h-screen  gap-2">
       <Link className="home-link" href="/">
         ◄ Home
       </Link>
       <form
-        className="w-full max-w-md p-8 space-y-6 bg-gray-100 rounded-lg shadow-md"
+        className="w-full max-w-md p-8 space-y-6 bg-gray-100 rounded-lg shadow-md text-black"
         onSubmit={handleSubmit}
       >
-        <h1 className="">Sign Up</h1>
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: "0.8rem",
-            color: "#777",
-          }}
-        >
-          Demo app, please don't use your real email or password
-        </p>
+        <h2 className="text-2xl font-bold text-center text-gray-900">
+          Registro
+        </h2>
+
         <input
           name="email"
           onChange={handleInputChange}
@@ -76,9 +70,9 @@ const SignUpPage = () => {
           type="submit"
           className="w-full py-2 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Create Account
+          Crear cuenta
         </button>
-        <Link href="/auth/sign-in-page">Already have an account? Sign In</Link>
+        <Link href="/auth/sign-in-page">Ya tenes cuenta? Logueate!</Link>
         {status && <p>{status}</p>}
       </form>
     </main>

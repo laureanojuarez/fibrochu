@@ -39,14 +39,14 @@ export default function SignInPage() {
   };
 
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen bg-white gap-2">
+    <main className="flex flex-col justify-center items-center min-h-screen  gap-2">
       <Link href="/">◄ Home</Link>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md p-8 space-y-6 bg-gray-100 rounded-lg shadow-md"
       >
         <h2 className="text-2xl font-bold text-center text-gray-900">
-          Sign In
+          Iniciar sesion
         </h2>
 
         <label className="block text-sm font-medium text-gray-900">Email</label>
@@ -59,12 +59,12 @@ export default function SignInPage() {
         />
 
         <label className="block text-sm font-medium text-gray-900">
-          Password
+          Contraseña
         </label>
         <input
           type="password"
           name="password"
-          placeholder="password"
+          placeholder="contraseña"
           onChange={handleInputChange}
           className="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -76,7 +76,7 @@ export default function SignInPage() {
           Login
         </button>
       </form>
-      <Link href="/auth/sign-up-page">Don't have an account? Sign Up</Link>
+      <Link href="/auth/sign-up-page">No tenes cuenta? Registrate</Link>
       {status && <p>{status}</p>}
     </main>
   );
