@@ -54,10 +54,6 @@ export default function ProductSlider({ productos }) {
 
   return (
     <div className="w-full px-4 py-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        <span className="text-foreground">Nuestros </span>
-        <span className="text-primary">Productos</span>
-      </h2>
       <Slider {...settings}>
         {productos.slice(0, 4).map((producto) => (
           <div className="h-64 md:h-80 lg:h-96 w-full relative bg-gray-dark rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-800 hover:border-primary group">
