@@ -7,15 +7,13 @@ export default function ProductCard({ producto }) {
   const addToCart = useCartStore((state) => state.addToCart);
 
   return (
-    <div className="bg-gray-dark rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all flex flex-col w-42 md:w-92 h-92 border border-gray-800 hover:border-primary group">
-      <div className="">
-        <img
-          src={producto.imagen_url}
-          alt={producto.nombre}
-          className="object-cover h-52 md:h-96 transform group-hover:scale-105 transition-transform duration-500 w-full"
-        />
-      </div>
-      <div className="p-4">
+    <div className="bg-gray-dark rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all flex flex-col w-42 md:w-92  border border-gray-800 hover:border-primary group justify-between">
+      <img
+        src={producto.imagen_url}
+        alt={producto.nombre}
+        className="object-cover h-52 md:h-96 transform group-hover:scale-105 transition-transform duration-500 w-full"
+      />
+      <div className="p-4 flex flex-col justify-between flex-1">
         <h2 className="text-xl font-semibold mb-2 text-foreground">
           {producto.nombre}
         </h2>
