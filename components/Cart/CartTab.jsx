@@ -11,7 +11,7 @@ const CartTab = ({ isOpen, toggleCart }) => {
   return (
     <div className="fixed inset-0  backdrop-opacity-70 backdrop-blur-md z-50 flex justify-end">
       <div
-        className="w-full sm:w-80 h-full shadow-lg overflow-y-auto flex flex-col justify-between border-l border-primary"
+        className="w-full sm:w-80 h-full shadow-lg overflow-y-auto flex flex-col justify-between"
         style={{
           background:
             "linear-gradient(to right, rgba(26, 26, 26, 0.98), #0d0d0d)",

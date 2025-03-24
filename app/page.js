@@ -5,8 +5,7 @@ export default function Home() {
     <main className="flex flex-col">
       <section className="w-full bg-gray-dark border-b border-primary p-3 text-center">
         <p className="text-foreground">
-          <span className="text-primary">♥</span> Envios unicamente en Rosario,
-          Santa Fe <span className="text-primary">♥</span>
+          Envios unicamente en <span>Rosario, Santa Fe</span>
         </p>
       </section>
 
