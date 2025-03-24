@@ -59,7 +59,7 @@ export default function ProductSlider({ productos }) {
         <span className="text-primary">Productos</span>
       </h2>
       <Slider {...settings}>
-        {productos.map((producto) => (
+        {productos.slice(0, 4).map((producto) => (
           <div className="h-64 md:h-80 lg:h-96 w-full relative bg-gray-dark rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-800 hover:border-primary group">
             {producto.imagen_url ? (
               <img

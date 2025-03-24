@@ -10,6 +10,9 @@ export function CheckoutButton() {
     nombre: "",
     apellido: "",
     direccion: "",
+    ciudad: "Rosario", // Valor predeterminado
+    provincia: "Santa Fe", // Valor predeterminado
+    instrucciones: "", // Nuevo campo para instrucciones
   });
 
   const [error, setError] = useState(null);
@@ -25,6 +28,19 @@ export function CheckoutButton() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    // Validar que sea de Rosario
+    if (buyerInfo.ciudad.trim().toLowerCase() !== "rosario") {
+      setError("Lo sentimos, solo realizamos envíos en Rosario");
+      return;
+    }
+
+    // Validar que haya instrucciones
+    if (!buyerInfo.instrucciones.trim()) {
+      setError("Por favor, describe cómo quieres el producto");
+      return;
+    }
+
     processPayment();
   };
 
@@ -47,7 +63,10 @@ export function CheckoutButton() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: cart,
+          items: cart.map((item) => ({
+            ...item,
+            instrucciones: buyerInfo.instrucciones, // Adjuntar instrucciones a cada ítem
+          })),
           buyer: buyerInfo,
         }),
       });
@@ -149,6 +168,53 @@ export function CheckoutButton() {
                   className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
                   required
                 />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Ciudad{" "}
+                  <span className="text-xs text-primary">
+                    (Solo envíos a Rosario)
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  name="ciudad"
+                  value={buyerInfo.ciudad}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Provincia
+                </label>
+                <input
+                  type="text"
+                  name="provincia"
+                  value={buyerInfo.provincia}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Instrucciones{" "}
+                  <span className="text-xs text-primary">(Obligatorio)</span>
+                </label>
+                <textarea
+                  name="instrucciones"
+                  value={buyerInfo.instrucciones}
+                  onChange={handleInputChange}
+                  placeholder="Describe cómo quieres tu producto (colores, tamaño, diseño, etc.)"
+                  className="w-full px-3 py-2 bg-background border border-gray-800 focus:border-primary rounded text-foreground outline-none transition-colors min-h-24"
+                  required
+                />
+                <p className="text-xs text-gray-light mt-1">
+                  Por favor detalla aquí todas las especificaciones de cómo
+                  quieres tu pedido.
+                </p>
               </div>
               <div className="flex justify-end space-x-2 mt-6">
                 <button

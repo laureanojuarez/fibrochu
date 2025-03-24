@@ -142,7 +142,7 @@ export async function POST(req) {
     }
 
     // ID para inserción
-    const newOrderId = paymentId; // Usamos el ID de pago como identificador principal
+    const newOrderId = String(paymentId);
 
     const { error: insertError } = await supabase.from("orders").insert([
       {

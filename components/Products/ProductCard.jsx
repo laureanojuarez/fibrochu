@@ -21,7 +21,7 @@ export default function ProductCard({ producto }) {
         <div className="flex justify-between items-center">
           <p className="text-primary font-bold text-lg">${producto.precio}</p>
           <button
-            className="flex items-center justify-center bg-primary hover:bg-accent text-white p-2 rounded-full w-10 h-10 transition-colors shadow-md"
+            className="flex items-center justify-center bg-primary hover:bg-accent text-white p-2 rounded-full w-10 h-10 transition-colors shadow-md cursor-pointer"
             onClick={() => addToCart(producto)}
             aria-label="Añadir al carrito"
           >
