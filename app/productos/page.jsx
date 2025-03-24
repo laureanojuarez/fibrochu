@@ -1,9 +1,9 @@
 import { getProductos } from "@/components/Products/getProductos";
 import ProductCard from "../../components/Products/ProductCard";
 
+export const dynamic = "force-dynamic";
 export default async function ProductsPage() {
   try {
-    // Cargar productos directamente desde el servidor
     const productos = await getProductos();
 
     return (

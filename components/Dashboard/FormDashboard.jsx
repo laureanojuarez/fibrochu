@@ -48,6 +48,13 @@ export const FormDashboard = ({ onProductAdded }) => {
       const newProduct = { nombre, descripcion, precio, imagen_url };
       onProductAdded(newProduct);
     }
+
+    try {
+      await fetch("/api/revalidate?path=/productos&secret=revalidacionlau2003");
+      console.log("Caché revalidada");
+    } catch (error) {
+      console.error("Error al revalidar caché:", error);
+    }
   };
 
   return (
