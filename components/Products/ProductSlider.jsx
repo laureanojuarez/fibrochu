@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Link from "next/link";
 
 export default function ProductSlider({ productos }) {
   // Hydration safety: evita errores de renderizado
@@ -61,29 +60,25 @@ export default function ProductSlider({ productos }) {
       </h2>
       <Slider {...settings}>
         {productos.map((producto) => (
-          <Link key={producto.id} href={`/productos/${producto.id}`}>
-            <div className="p-2">
-              <div className="h-64 md:h-80 lg:h-96 w-full relative bg-gray-dark rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-800 hover:border-primary group">
-                {producto.imagen_url ? (
-                  <img
-                    src={producto.imagen_url}
-                    alt={producto.nombre}
-                    className="h-full w-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center bg-gray-dark">
-                    <span className="text-gray-500">Sin imagen</span>
-                  </div>
-                )}
-                <div className="absolute bottom-0 left-0 right-0 bg-gray-dark bg-opacity-80 p-2 transform translate-y-0 group-hover:bg-black group-hover:bg-opacity-90 transition-all">
-                  <h3 className="text-xs sm:text-sm font-medium truncate text-foreground">
-                    {producto.nombre}
-                  </h3>
-                  <p className="text-primary font-bold">${producto.precio}</p>
-                </div>
+          <div className="h-64 md:h-80 lg:h-96 w-full relative bg-gray-dark rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-800 hover:border-primary group">
+            {producto.imagen_url ? (
+              <img
+                src={producto.imagen_url}
+                alt={producto.nombre}
+                className="h-full w-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center bg-gray-dark">
+                <span className="text-gray-500">Sin imagen</span>
               </div>
+            )}
+            <div className="absolute bottom-0 left-0 right-0 bg-gray-dark bg-opacity-80 p-2 transform translate-y-0 group-hover:bg-black group-hover:bg-opacity-90 transition-all">
+              <h3 className="text-xs sm:text-sm font-medium truncate text-foreground">
+                {producto.nombre}
+              </h3>
+              <p className="text-primary font-bold">${producto.precio}</p>
             </div>
-          </Link>
+          </div>
         ))}
       </Slider>
     </div>

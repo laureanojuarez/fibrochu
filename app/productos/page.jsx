@@ -7,7 +7,7 @@ export default async function ProductsPage() {
     const productos = await getProductos();
 
     return (
-      <div className="container mx-auto px-2 py-4">
+      <div className="container mx-auto my-8">
         <h1 className="text-3xl font-bold mb-8 text-center">
           Nuestros Productos
         </h1>

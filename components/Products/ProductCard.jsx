@@ -7,7 +7,7 @@ export default function ProductCard({ producto }) {
   const addToCart = useCartStore((state) => state.addToCart);
 
   return (
-    <div className="bg-gray-dark rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all flex flex-col w-44 md:w-92 border border-gray-800 hover:border-primary group">
+    <div className="bg-gray-dark rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all flex flex-col w-42 md:w-92 h-92 border border-gray-800 hover:border-primary group">
       <div className="">
         <img
           src={producto.imagen_url}

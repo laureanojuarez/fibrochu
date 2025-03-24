@@ -10,13 +10,11 @@ export const metadata = {
 export default function MetodospagoPage() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Métodos de Pago
-      </h1>
+      <h1 className="text-3xl font-bold text-center mb-8 ">Métodos de Pago</h1>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex items-center justify-center mb-6">
-          <Image src={mpLogo} alt="MercadoPago" className="w-72" />
+      <div className="bg-slate-200 rounded-lg shadow-md p-6 mb-8">
+        <div className="flex items-center justify-center h-30">
+          <Image src={mpLogo} alt="MercadoPago" className="w-40" />
         </div>
 
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
@@ -43,7 +41,7 @@ export default function MetodospagoPage() {
           </div>
         </div>
 
-        <ul className="list-disc pl-5 mb-8 space-y-2">
+        <ul className=" text-black list-disc pl-5 mb-8 space-y-2">
           <li>Tarjetas de crédito y débito a través de MercadoPago</li>
           <li>Transferencia bancaria</li>
           <li>Pago en efectivo (Rapipago, Pago Fácil, etc.)</li>
