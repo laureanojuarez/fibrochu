@@ -5,31 +5,37 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function POST(req) {
+  console.log(`🔔 Webhook recibido: ${new Date().toISOString()}`);
+
   try {
     const body = await req.json();
+    console.log("Webhook payload:", JSON.stringify(body, null, 2));
 
     const topic = body.topic || body.type;
+    const action = body.action || "";
 
-    if (topic !== "payment" && !body.data) {
-      console.log("No es una notificación de pago o faltan datos");
+    // Verificar si es una notificación de prueba o una notificación real de pago
+    if ((topic !== "payment" && !body.data) || !body.data?.id) {
+      console.log("No es una notificación de pago válida o faltan datos");
       return NextResponse.json({
         status: "ignored",
         message: "Notificación no relevante",
       });
     }
 
-    let paymentId;
-    if (topic === "payment") {
-      paymentId = body.data.id;
-    } else {
-      paymentId = body.data?.id;
-    }
+    // Extraer ID de pago correctamente
+    const paymentId = body.data.id;
+    console.log(`✅ Procesando notificación para pago ID: ${paymentId}`);
 
-    if (!paymentId) {
-      throw new Error("No se pudo identificar el ID de pago");
-    }
-
+    // Obtener detalles del pago desde MercadoPago
     const accessToken = process.env.MP_ACCESS_TOKEN;
+    if (!accessToken) {
+      throw new Error("Token de acceso de MercadoPago no configurado");
+    }
+
+    console.log(
+      `🔍 Consultando detalles del pago ${paymentId} en MercadoPago...`
+    );
     const paymentDetailsResponse = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -40,14 +46,29 @@ export async function POST(req) {
     );
 
     if (!paymentDetailsResponse.ok) {
+      console.error(
+        `❌ Error al obtener detalles del pago: ${paymentDetailsResponse.status}`
+      );
+
+      // Si es un error 404, puede ser un pago que aún no existe o una prueba
+      if (paymentDetailsResponse.status === 404) {
+        console.log(
+          "⚠️ Pago no encontrado en MercadoPago (404). Puede ser una prueba o un pago recién creado."
+        );
+        return NextResponse.json({
+          status: "acknowledged",
+          message: "Notificación recibida, pero el pago no está disponible aún",
+        });
+      }
+
       throw new Error(
         `Error obteniendo detalles de pago: ${paymentDetailsResponse.status}`
       );
     }
 
+    // Procesar el pago normalmente
     const payment = await paymentDetailsResponse.json();
-    console.log("Detalles del pago:", JSON.stringify(payment, null, 2));
-
+    console.log(`💰 Detalles del pago ${paymentId} obtenidos correctamente`);
     // Extraer información del pago
     const {
       status,
@@ -176,13 +197,16 @@ export async function POST(req) {
       throw insertError;
     }
 
+    // Al finalizar, agregar logs claros
     if (status === "approved") {
-      console.log(`Pago ${paymentId} aprobado y procesado correctamente`);
+      console.log(`💵 Pago ${paymentId} aprobado y procesado correctamente`);
+    } else {
+      console.log(`ℹ️ Pago ${paymentId} procesado con estado: ${status}`);
     }
 
     return NextResponse.json({ status: "success" });
   } catch (error) {
-    console.error("Error en el webhook:", error);
+    console.error("❌ Error en el webhook:", error);
     return NextResponse.json(
       {
         error: "Error processing webhook",
@@ -193,10 +217,11 @@ export async function POST(req) {
   }
 }
 
-// Para responder a solicitudes GET
+// Endpoint GET para verificar que el webhook está activo
 export async function GET() {
   return NextResponse.json({
-    message: "Webhook endpoint activo",
-    info: "Este endpoint está diseñado para recibir notificaciones de MercadoPago",
+    status: "online",
+    message: "Webhook endpoint está activo y listo para recibir notificaciones",
+    timestamp: new Date().toISOString(),
   });
 }
