@@ -1,4 +1,4 @@
-import SlideProducts from "@/components/Products/SlideProducts";
+import { Carousel } from "@/components/Products/Carousel";
 
 export default function Home() {
   return (
@@ -15,8 +15,9 @@ export default function Home() {
           <span className="text-primary">Destacados</span>
           <div className="h-1 w-40 bg-gradient-to-r from-transparent via-primary to-transparent absolute -bottom-2 left-1/2 transform -translate-x-1/2"></div>
         </h1>
-        <SlideProducts />
       </div>
+
+      <Carousel />
 
       <div className="w-full bg-gray-dark border-t border-primary py-4 mb-3">
         <div className="flex flex-wrap justify-center gap-8 px-4">

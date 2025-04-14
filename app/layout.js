@@ -3,8 +3,6 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header/Header";
 import { SessionProvider } from "@/context/SessionContext";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

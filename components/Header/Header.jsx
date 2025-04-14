@@ -7,10 +7,17 @@ import { RiMenuLine, RiUser3Line, RiShoppingCart2Fill } from "@remixicon/react";
 import CartTab from "../Cart/CartTab";
 import Link from "next/link";
 import Image from "next/image";
+import useCartStore from "@/store/cartStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart } = useCartStore();
+
+  const itemCount = cart.reduce(
+    (total, item) => total + (item.cantidad || 1),
+    0
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,12 +47,24 @@ const Header = () => {
           >
             <RiUser3Line size={20} />
           </Link>
-          <RiShoppingCart2Fill
-            size={20}
-            cursor={"pointer"}
-            onClick={toggleCart}
-            className="text-foreground hover:text-primary transition-colors"
-          />
+          <div className="relative">
+            <RiShoppingCart2Fill
+              size={20}
+              cursor={"pointer"}
+              onClick={toggleCart}
+              className="text-foreground hover:text-primary transition-colors"
+            />
+            {/* Burbuja de contador solo si hay items */}
+            {itemCount > 0 && (
+              <span
+                className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center animate-pulse-once"
+                style={{ fontSize: "0.65rem" }}
+              >
+                {itemCount}
+              </span>
+            )}
+          </div>
+
           <RiMenuLine
             size={20}
             cursor={"pointer"}

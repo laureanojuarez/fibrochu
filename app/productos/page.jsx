@@ -16,7 +16,7 @@ export default async function ProductsPage() {
             No hay productos disponibles
           </p>
         ) : (
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center w-full gap-4">
             {productos &&
               productos.map((producto) => (
                 <ProductCard key={producto.id} producto={producto} />
