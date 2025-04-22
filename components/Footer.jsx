@@ -1,4 +1,6 @@
 const Footer = () => {
+  console.log("Hello");
+
   return (
     <footer
       className="shadow-md text-foreground py-6 border-t border-primary text-sm"

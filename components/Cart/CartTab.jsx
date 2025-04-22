@@ -1,6 +1,6 @@
 import React from "react";
 import useCartStore from "../../store/cartStore";
-import { CheckoutButton } from "./CheckoutButton";
+import { EnviarPedidoWhatsapp } from "./CheckoutButton";
 import { RiCloseLine, RiDeleteBin6Line } from "@remixicon/react";
 
 const CartTab = ({ isOpen, toggleCart }) => {
@@ -80,7 +80,7 @@ const CartTab = ({ isOpen, toggleCart }) => {
           </div>
 
           <div className="p-4 border-t border-gray-800 bg-gray-dark bg-opacity-50">
-            <CheckoutButton />
+            <EnviarPedidoWhatsapp cart={cart} />
 
             {cart.length > 0 && (
               <button
