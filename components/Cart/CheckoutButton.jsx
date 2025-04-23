@@ -1,3 +1,5 @@
+import { RiWhatsappLine } from "@remixicon/react";
+
 export function EnviarPedidoWhatsapp({ cart }) {
   const handleClick = (e) => {
     e.stopPropagation();
@@ -26,9 +28,10 @@ export function EnviarPedidoWhatsapp({ cart }) {
 
   return (
     <button
-      className="bg-green-500 w-full cursor-pointer py-2 rounded text-black hover:bg-green-100 transition-colors"
+      className="flex justify-center items-center gap-2   bg-green-500 w-full cursor-pointer py-2 rounded text-black hover:bg-green-100 transition-colors"
       onClick={handleClick}
     >
+      <RiWhatsappLine size={"25px"} />
       Enviar pedido por WhatsApp
     </button>
   );

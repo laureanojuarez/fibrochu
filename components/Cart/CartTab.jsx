@@ -80,15 +80,16 @@ const CartTab = ({ isOpen, toggleCart }) => {
           </div>
 
           <div className="p-4 border-t border-gray-800 bg-gray-dark bg-opacity-50">
-            <EnviarPedidoWhatsapp cart={cart} />
-
             {cart.length > 0 && (
-              <button
-                className="w-full py-2 mt-2 rounded bg-background text-gray-light border border-gray-800 hover:text-primary hover:border-primary transition-colors"
-                onClick={clearCart}
-              >
-                Vaciar carrito
-              </button>
+              <>
+                <EnviarPedidoWhatsapp cart={cart} />
+                <button
+                  className="w-full py-2 mt-2 rounded bg-background text-gray-light border border-gray-800 hover:text-primary hover:border-primary transition-colors"
+                  onClick={clearCart}
+                >
+                  Vaciar carrito
+                </button>
+              </>
             )}
           </div>
         </div>
